@@ -1,0 +1,154 @@
+Review of series
+1. part - SETUP
+    - database/factories is used for generating test objects with tinker: factory('App\Thread', 5)->create()
+    - php artisan make:model Reply -mr creates migration and resourceful controller, normal controller is -c
+
+2. part - TEST FOR FEATURES - created ThreadsTest
+    - run test with phpunit
+    - in phpunit.xml change values on bottom... add DB_CONNECTION value=sqlite and DB_DATABASE value=:memory:
+    - add use DatabaseMigrations in class (because of sqlite)
+    - FEATURE is high level test
+    - UNIT test is lower level, for such as testing if reply has an owner
+    - Difference is, UNIT test return exact error, features do not
+    - php artisan make:test ReplyTest --unit
+    - for UNIT call: phpunit test/Unit/ImeTesta.php
+    - rerun php artisan serve after any change in .env file or databases!
+    - for test, you should use another database/ sqlite.. which works in memory, doesnt create real DB
+    - tests/Feature - create file, that looks like ExampleTest.php and function names start with test_
+    - add DatabaseMigrations trait, and use it in class. it creates migration and rolls back after tests end
+
+    - In view, when linking to a model, thread, anything... use Model function path()
+    - instead full path in view, just call href= "{{ $thread->path() }}"
+
+3. part testing (for authenticated users)
+    - to log in a user in test, use $this->be($user);
+    - To test only 1 function: phpunit --filter name_of_test_function
+    - bug, post vrne OK tudi v primeru errorja... dodaš in handler.php add to render function : if(app()->environment() === 'testing') throw $exception;
+    - $this->assertCount(1, $this->thread->replies); assertCount prešteje št. objektov
+
+6. part (User posting threads form)
+    - instead of $this->be($user), can use $this->actingAs($user)
+    - $thread = factory('App\Thread')->raw() returns an array instead of using ->make() and casting $thread->toArray();
+    -TODO FIX authenticated_user_can_create_thread()
+
+7. part Testing helpers- creating utilities folder and functions.php file to refactor code
+    - composer.json in "autoload-dev" section add: "files" : ["tests/utilities/functions.php"]
+    - that will only be used for development
+    - composer dump-autoload after adding helper functions
+    - signIn function created in TestCase.php file
+    - use DatabaseMigrations;
+
+8. part with Exception handling
+    - solved problem with tests throwing exceptions instead of returning OK, by adding functions from https://gist.github.com/adamwathan/125847c7e3f16b88fa33a9f8b42333da
+    to TestCase.php file
+    - automatically disables exception handling
+    - example: $this->withExceptionHandling()->signIn();
+    - now can delete this line from Handler.php ->
+    -> if(app()->environment() === 'testing') throw $exception;
+
+9. part
+    - php artisan migrate:refresh
+    - php artisan tinker . . . .  factory('App\Thread', 5)->create()
+    - to persist(keep) object in test, use create, not make
+    - assertRedirect('/login') checks, if request will result in redirect to given path
+
+10. part Testing form validation errors
+    - tests/Feature/CreateThreadsTest.php
+    - offtopic: fixed authenticated_user_can_create_thread() function, after: make, check response->headers->get('Location')
+    - tests for testing validation of creating threads: - a_thread_requires_a_title()
+    -   ->assertSessionHasErrors('title'); checks if request returned an error for title input
+    - split function a_thread_requires_a_title into two functions + publishThread, which overrides a make function with custom params
+    - a_thread_requires_a_body and valid_category uses same function publishThread with diff. params
+    - 'category_id' => 'required|exists:categories,id'
+
+11. part Filtering threads by Category
+    - renamed ThreadsTest.php to ReadThreadsTest.php
+    - created new test in Feature/ReadThreadsTest ->
+    -> a_user_can_filter_threads_by_tag, checking if a certain category:
+    - will show right subthreads by using   ->assertSee($threadInCategory->title)
+    - and wont show wrong ones   ->assertDontSee($threadNotInCategory->title)
+    following is used to search categories by slug instead id
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+    - created UnitTest CategoryTest to check if it has threads
+    - created dropdown kategorije
+
+12. part Adding category input to Add thread form
+    - form validation
+    - displaying errors
+    - select-option input for categories
+    - old value on form submit
+
+13. part Extracting View Composers for DATA,
+    that is used in multiple views- QUERY JUST ONCE, tackle N+1 problem
+    (for example categories and user in navigation header)
+    - add code to ServiceProvider, in boot function -> https://laravel.com/docs/5.4/views#view-composers
+    - can extract code to ServiceProviders-> php artisan make:provider ViewServiceProvider
+
+14. part filtering by Users, adding QUERY STRING URI = /threads?by=JohnDoe
+    -test in /features/ReadThreadsTest.php, creating two threads, one by auth user, other random
+    - a_user_can_filter_threads_by_username
+
+15. part REFACTORING ThreadController
+    1. way - extract querries to a method in controller- getThreads(Category $category) ->
+    -> usage: $threads = $this->getThreads($category);
+
+    2. way - extract to a new class that creates a query object -> App\Queries\ThreadsQuery.php
+    -> usage: $threads = (new ThreadsQuery)->get();
+
+    3. HARD way - create filtering class -> App\Filters\ThreadFilters.php
+    - in controller index add ThreadFilters $filters param
+    - add function scopeFilter($query, $filters) to Thread model
+    - create abstract class Filters.php that will be extended by other classes (UserFilters, ThreadFilters...)
+    - it contains functions used by all subclasses
+    - threadFilters has a protected $filters = ['by', 'popular', 'new'] array,
+    -> which declares all possible filters which are also stored as functions in same class
+
+//TODO: Refactor Pixtr according to part 15 and 16 from this series
+
+16. part REPLIES COUNT FOR EVERY THREAD, sidebar with meta details on threads, pagination
+    - add GLOBAL QUERY SCOPE to Thread class, protected static function boot()
+    - GLOBAL QUERY SCOPE runs automatically if in Model boot()
+    - $thread->replies_count
+
+17. part Filter threads by popular
+    - in Feature/ReadThreadsTest.php user_can_filter_threads_by_popular()
+    - using $response = $this->getJson('/threads?popular=1')->json();
+    - in threadController index if (request()->wantsJson()) {
+            return $threads;
+      }
+    - for debugging, call $threads->toSql(), before using ->get(), to debug query
+    - in popular, $this->builder->getQuery()->orders = []; removes the latest() from query builder
+
+18.part Favorite replies ( 'favorited_type' => get_class($reply) allows to favorite anything)
+    - Feature/FavoriteTest.php
+    - /replies/id/favorite
+    - pivot table favorites -> Reply has function favorites with $this->morphMany('App\Favorite', 'favorited_id')
+    - in migrations file $table->unique(['user_id', 'favorited_id', 'favorited_type']) will force only one favorite per item;
+
+19. part Favorite Button form
+    - using class flex and level
+
+20. part DEBUGBAR to fix eager load
+    install steps:
+    - 1. composer require...
+    - 2. add service provider to AppService register function -
+        if($this->app->isLocal()) { ... }
+
+    -eager load
+    - to load categories only once: in AppService... boot()
+     \View::composer('*', function ($view) {
+                 $categories = \Cache::rememberForever('categories', function() {
+                     return Category::all();
+                 });
+
+                 $view->with('categories', $categories);
+     }
+
+21. part GLOBAL SCOPE QUERY REDUCTION (for reply owner, count favorite, comment)
+    - do it by declaring boot() in Reply model or protected $with = ['owner'];
+    - extracted code for favoriting from Reply to  Favorable trait, Can be used with threads also!
+
+22. part User profiles
