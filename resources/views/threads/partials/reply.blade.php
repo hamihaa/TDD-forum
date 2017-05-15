@@ -2,7 +2,10 @@
     <div class="panel-heading">
         <div class="level">
                 <h5 class="flex">
-                {{ $reply->owner->name }},  {{ $reply->created_at->diffForHumans() }}
+                    <a href="/profiles/{{ $reply->owner->name }}">
+                        {{ $reply->owner->name }}
+                        </a>
+                        ,  {{ $reply->created_at->diffForHumans() }}
                 </h5>
             <form method="POST" action="/replies/{{ $reply->id }}/favorite">
                 {{ csrf_field() }}

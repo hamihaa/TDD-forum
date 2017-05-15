@@ -26,12 +26,12 @@ class ThreadController extends Controller
      */
     public function index(Category $category, ThreadFilters $filters)
     {
-
         $threads = $this->getThreads($category, $filters);
 
         if (request()->wantsJson()) {
             return $threads;
         }
+
         return view('threads.index', compact('threads'));
     }
 
@@ -113,9 +113,22 @@ class ThreadController extends Controller
      * @param  \App\Thread  $thread
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Thread $thread)
+    public function destroy($category, Thread $thread)
     {
-        //
+        //ThreadPolicy, in case of error, returns 403
+        $this->authorize('delete', $thread);
+
+        \DB::transaction(function() use ($thread) {
+            $thread->replies()->delete();
+            $thread->delete();
+        });
+
+
+        if(request()->wantsJson()){
+            return response([], 204);
+        }
+
+        return redirect('/threads');
     }
 
     /**

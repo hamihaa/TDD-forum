@@ -9,6 +9,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -23,7 +24,27 @@ class User extends Authenticatable
      *
      * @var array
      */
+
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Default route key for model binding is name of user
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'name';
+    }
+
+    public function threads()
+    {
+        return $this->hasMany('App\Thread')->latest();
+    }
+
+    public function activity()
+    {
+        return $this->hasMany(Activity::class);
+    }
 }

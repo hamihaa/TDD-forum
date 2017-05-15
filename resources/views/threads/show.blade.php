@@ -6,10 +6,25 @@
             <div class="col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <a href="#">
-                            {{ $thread->creator->name }}
-                        </a>
-                        <h4>{{ $thread->title }}</h4>
+                        <div class="level">
+                            <span class="flex">
+                                <a href="/profiles/{{ $thread->creator->name }}">
+                                    {{ $thread->creator->name }}
+                                </a>
+                                <h4>{{ $thread->title }}</h4>
+                            </span>
+                        @can('delete', $thread)
+                            <form action="{{$thread->path()}}" method="POST">
+                                {{ csrf_field() }}
+                                {{ method_field('DELETE') }}
+
+                                <!-- Button Form Input  -->
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-danger" required>Izbriši</button>
+                                    </div>
+                            </form>
+                            @endcan
+                        </div>
                     </div>
 
                     <div class="panel-body">

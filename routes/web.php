@@ -23,9 +23,12 @@ Route::get('/threads/create', 'ThreadController@create');
 Route::post('/threads', 'ThreadController@store');
 Route::get('/threads/{category}', 'ThreadController@index');
 Route::get('/threads/{category}/{thread}', 'ThreadController@show');
+Route::delete('/threads/{category}/{thread}', 'ThreadController@destroy');
 
 // TODO Route::post('/threads/{thread}/favorite', 'FavoriteController@store');
 ///** instead of all these default CRUD paths for Threads, use Route::resource('threads', 'ThreadController')
 
 Route::post('/threads/{category}/{thread}/replies', 'ReplyController@store');
 Route::post('/replies/{reply}/favorite', 'FavoriteController@store');
+
+Route::get('profiles/{user}', 'ProfileController@show');

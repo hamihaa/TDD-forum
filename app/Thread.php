@@ -3,11 +3,12 @@
 namespace App;
 
 use App\Traits\Favorable;
+use App\Traits\RecordsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
-    use Favorable;
+    use Favorable, RecordsActivity;
 
     protected $guarded = [];
 
@@ -17,10 +18,10 @@ class Thread extends Model
     {
         parent::boot();
 
+        //replies_count is always available whne calling $thread object
         static::addGlobalScope('replyCount', function($builder){
             $builder->withCount('replies');
         });
-
     }
 
     /**

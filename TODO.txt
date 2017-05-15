@@ -107,6 +107,7 @@ Review of series
     -> which declares all possible filters which are also stored as functions in same class
 
 //TODO: Refactor Pixtr according to part 15 and 16 from this series
+// TODO: use policies on pixtr- part 24
 
 16. part REPLIES COUNT FOR EVERY THREAD, sidebar with meta details on threads, pagination
     - add GLOBAL QUERY SCOPE to Thread class, protected static function boot()
@@ -148,7 +149,55 @@ Review of series
      }
 
 21. part GLOBAL SCOPE QUERY REDUCTION (for reply owner, count favorite, comment)
+    -> $with = ['likes', 'owner'] .... ! to automatically eager load any necessary relationships.
     - do it by declaring boot() in Reply model or protected $with = ['owner'];
     - extracted code for favoriting from Reply to  Favorable trait, Can be used with threads also!
 
 22. part User profiles
+    - Features/ProfilesTest.php
+    - in views, use $profileUser, since $user can be used as authenticated user, shared in all views!
+
+23. part Delete thread with test,
+    - test: $this->json('DELETE', $thread->path());
+    - $this->assertDatabaseMissing('threads', $thread->toArray());
+    - in destroy function $thread->replies()->delete();
+             $thread->delete();
+    - in form use {{ method_field('DELETE' }}
+    - to do multiple queries and rollback if fail use \DB::transaction(function() use ($thread) {
+
+
+24. part Authorization with policy
+    - php artisan make:policy ThreadPolicy --model=Thread to include basic "CRUD"
+    - after creating, you need to register it in AuthServiceProvider. read documentation
+    - https://laravel.com/docs/5.4/authorization#policy-methods
+    - USAGE: In controller, do $this->authorize('update', $thread); will abort with error 403 if false
+    - in view, use @can('delete', $thread) and @endcan, instead of Auth::check() etc..
+    - to authorize ADMIN for a policy class, create method before(), that authorizes all action within a given policy
+    - to authorize ADMIN for WHOLE APP, use Gate as in example (documentation). declare it in AuthServiceProvider
+    -> boot method-> Gate::before(function($user) {
+                        if ($user->name == 'miha'){
+                            return true;
+                        }
+                     });
+    - policies should be used when you wish to authorize an action for a particular model or resource
+
+    - instead of if(count($replies)) and foreach loop, use @forelse and @empty instead of else
+    - $this->delete($thread->path())->assertStatus(403) when expecting error code on request;
+    - to throw error, do abort( 400, 403, any status code, and 'message with it';
+    -> funct unauthorized_user_cant_delete_threads
+
+25. part Creating Activity feed- log- diary
+    - when you create thread/reply, you also create a record in activities table
+    - Unit/ActivityTest.php
+    - created table 'activities'
+    - make:model Activity -m to add migration
+    - unsignedInteger is foreign key that will always be >0
+    - get_class($thread)
+    - extract Activity to Traits/RecordsActivity
+    -!!!!! static function bootNameOfTrait will make trait automatically load on actions inside boot (create, delete...)
+    - anything you want to save to activities, put in getEventsForRecord
+
+26. part Polymorphism Creating activity feed view
+    - basic polymorphism = extracting unique logic to partials
+    - @include("profiles.activities.{$activity->type}")
+    - calling files based on type of activity

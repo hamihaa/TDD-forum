@@ -4,31 +4,36 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Objave</div>
-                    <div class="panel-body">
-                        @foreach($threads as $thread)
-                            <article>
-                                <div class="level">
-                                    <h4 class="flex">
-                                        <a href="{{ $thread->path() }}">
-                                            {{ $thread->title }}
-                                        </a> <small>avtor: {{ $thread->creator->name }}</small>
 
-                                    </h4>
+                @forelse($threads as $thread)
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="level">
+                                <h4 class="flex">
+                                    <a href="{{ $thread->path() }}">
+                                        {{ $thread->title }}
+                                    </a>
+                                    <small>avtor:
+                                        <a href="/profiles/{{ $thread->creator->name }}">
+                                            {{ $thread->creator->name }}
+                                        </a>
+                                    </small>
+                                </h4>
+                                <strong>
+                                    število odgovorov: {{ $thread->replies_count }}
+                                </strong>
+                            </div>
+                        </div>
+                        <div class="panel-body">
 
-                                    <strong>
-                                        število odgovorov: {{ $thread->replies_count }}
-                                    </strong>
-                                </div>
-                                <div class="body">
-                                    {{ $thread->body }}
-                                </div>
-                            </article>
-                            <hr>
-                        @endforeach
+                            <div class="body">
+                                {{ $thread->body }}
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    @empty
+                    <p>Ni tem, ki ustrezajo tej kategoriji.</p>
+                @endforelse
             </div>
         </div>
     </div>
