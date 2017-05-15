@@ -1,17 +1,12 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="level">
-            <span class="flex">
-                {{ $profileUser->name }} je ustvaril/a objavo
-            </span>
-        </div>
-    </div>
+@component('profiles.activities.activity')
+    @slot('heading')
+        {{ $profileUser->name }} je ustvaril/a objavo
+        <a href="{{ $activity->subject->path() }}">
+            {{ $activity->subject->title }}
+        </a>
+    @endslot
 
-    <div class="panel-body">
-        <article>
-            {{ $activity->subject->body }}
-        </article>
-    </div>
-</div>
-
-
+    @slot('body')
+        {{ $activity->subject->body }}
+    @endslot
+@endcomponent

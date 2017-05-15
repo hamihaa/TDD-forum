@@ -1,15 +1,12 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="level">
-            <span class="flex">
-                {{ $profileUser->name }} je dodal/a odgovor
-            </span>
-        </div>
-    </div>
+@component('profiles.activities.activity')
+    @slot('heading')
+        {{ $profileUser->name }} je dodal/a odgovor na
+        <a href="{{ $activity->subject->thread->path() }}">
+            {{ $activity->subject->thread->title }}
+        </a>
+    @endslot
 
-    <div class="panel-body">
-        <article>
-            {{ $activity->subject->body }}
-        </article>
-    </div>
-</div>
+    @slot('body')
+    {{ $activity->subject->body }}
+    @endslot
+@endcomponent

@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Activity;
 use App\User;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
 
-    public function show(\App\User $user)
+    public function show(User $user)
     {
-        $activities = $user->activity()->with('subject')->get();
 
         return view('profiles.show', [
             'profileUser' => $user,
-            'activities' => $activities
+            'activities' => Activity::getUserActivity($user)
         ]);
     }
+
+
 }

@@ -197,7 +197,17 @@ Review of series
     -!!!!! static function bootNameOfTrait will make trait automatically load on actions inside boot (create, delete...)
     - anything you want to save to activities, put in getEventsForRecord
 
-26. part Polymorphism Creating activity feed view
+26. part Polymorphism Creating activity feed view with component and slot
     - basic polymorphism = extracting unique logic to partials
     - @include("profiles.activities.{$activity->type}")
     - calling files based on type of activity
+    - groupBy date, in view using double for loop
+    - using component for rendering views - profiles.activities.activity is a template
+    - created reply and thread use that component and two slots, heading and body
+    - limit query results with ->take(10) instead of limit
+    - extract activity feed to static method in Activity model
+
+27. part Writing test for activity feed
+    - extract activity feed to static method in Activity model
+    - Activity::getUserActivity($user) accepts user and returns his feed to profileController show method
+    - Carbon::now()->subWeek() return a week old date

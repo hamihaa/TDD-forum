@@ -12,8 +12,8 @@ class Reply extends Model
 
     protected $guarded = [];
 
-    //to eager load owner and favourites with every reply object
-    protected $with = ['owner', 'favorites'];
+    //to eager load owner, favourites and  with every reply object
+    protected $with = ['owner', 'favorites', 'thread'];
 
     /**
      * A reply has an owner.
@@ -25,5 +25,9 @@ class Reply extends Model
         return $this->belongsTo('App\User', 'user_id');
     }
 
+    public function thread()
+    {
+        return $this->belongsTo('App\Thread');
+    }
 
 }

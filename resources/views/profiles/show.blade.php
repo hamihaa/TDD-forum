@@ -7,14 +7,18 @@
             <div class="page-header">
                 <h1>
                     {{ $profileUser->name }}
-                    <small>član od {{ $profileUser->created_at->format(' F Y ') }}</small>
+                    <small>član od {{ $profileUser->created_at->format('m.Y ') }}</small>
                 </h1>
             </div>
 
-            @foreach($activities as $activity)
-                @include("profiles.activities.{$activity->type}")
+            @foreach($activities as $date => $record)
+                <h3>
+                    {{$date}}
+                </h3>
+                @foreach($record as $activity)
+                    @include("profiles.activities.{$activity->type}")
+                @endforeach
             @endforeach
-            {{-- $threads->links() --}}
         </div>
         </div>
     </div>

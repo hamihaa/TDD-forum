@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Activity;
+use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -45,5 +46,34 @@ class ActivityTest extends TestCase
         $this->assertEquals(2, Activity::count());
     }
 
+    /**
+     * Creates two threads from different dates and checks if the display is correct
+     * @test
+     */
+    public function fetches_a_feed_for_any_user()
+    {
+        $this->signIn();
+
+        //create 2 threads
+        create('App\Thread', [
+            'user_id' => auth()->id(),
+        ], 2);
+
+        //for the purpose of our test, we must manually change the date of first activity
+        //to simulate, that it was created a week ago
+        auth()->user()->activity()->first()->update(['created_at' => Carbon::now()->subWeek()]);
+
+        $feed = Activity::getUserActivity(auth()->user());
+
+        //check that it contains the thread created at this time
+        $this->assertTrue($feed->keys()->contains(
+            Carbon::now()->format('d.m.Y')
+        ));
+
+        //check that it contains the thread created a week ago ( ->subWeek())
+        $this->assertTrue($feed->keys()->contains(
+            Carbon::now()->subWeek()->format('d.m.Y')
+        ));
+    }
 
 }
