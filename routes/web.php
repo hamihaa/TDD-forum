@@ -29,6 +29,8 @@ Route::delete('/threads/{category}/{thread}', 'ThreadController@destroy');
 ///** instead of all these default CRUD paths for Threads, use Route::resource('threads', 'ThreadController')
 
 Route::post('/threads/{category}/{thread}/replies', 'ReplyController@store');
+Route::patch('/replies/{reply}', 'ReplyController@update');
+Route::delete('/replies/{reply}', 'ReplyController@destroy');
 Route::post('/replies/{reply}/favorite', 'FavoriteController@store');
 
 Route::get('profiles/{user}', 'ProfileController@show');

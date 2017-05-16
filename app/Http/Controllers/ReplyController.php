@@ -33,7 +33,7 @@ class ReplyController extends Controller
             'user_id' => auth()->id()
         ]);
 
-        return back();
+        return back()->with('flash', 'Vaš komentar je bil uspešno dodan.');
     }
 
     /**
@@ -67,7 +67,8 @@ class ReplyController extends Controller
      */
     public function update(Request $request, Reply $reply)
     {
-        //
+        $this->authorize('update', $reply);
+        $reply->update(['body' => request('body')]);
     }
 
     /**
@@ -78,6 +79,11 @@ class ReplyController extends Controller
      */
     public function destroy(Reply $reply)
     {
-        //
+        $this->authorize('delete', $reply);
+        $reply->delete();
+        if (request()->expectsJson()){
+            return response(['status' => 'odgovor izbrisan.']);
+        }
+        return back();
     }
 }

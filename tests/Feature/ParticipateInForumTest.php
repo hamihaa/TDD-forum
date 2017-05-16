@@ -65,4 +65,39 @@ class ParticipateInForumTest extends TestCase
 
     }
 
+    /**
+     * @test
+     */
+    function unauthorized_users_cant_update_replies()
+    {
+        $this->withExceptionHandling();
+        //for guest expect redirect to login
+        $reply =create('App\Reply');
+        $newReply = 'new body';
+        $this->patch("/replies/{$reply->id}", ['body' => $newReply])
+            ->assertRedirect('login');
+
+        //for unaouthorized user expect 403 code
+        $this->signIn();
+
+        $reply =create('App\Reply');
+        $this->patch("/replies/{$reply->id}", ['body' => $newReply])
+            ->assertStatus(403);
+
+    }
+
+    /**
+     * @test
+     */
+    function authorized_users_can_update_replies()
+    {
+        $this->signIn();
+
+        $reply =create('App\Reply', ['user_id' => auth()->id()]);
+
+        $newReply = 'new body';
+        $this->patch("/replies/{$reply->id}", ['body' => $newReply]);
+
+        $this->assertDatabaseHas('replies', ['id' => $reply->id, 'body' => $newReply]);
+    }
 }

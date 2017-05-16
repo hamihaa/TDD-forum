@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Activity;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -61,13 +62,42 @@ class DeleteThreadTest extends TestCase
         //delete action also deletes all replies associated with thread
         $this->assertDatabaseMissing('threads', ['id' => $thread->id]);
         $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
+
+        //assert that there are 0 records in activity table
+        $this->assertEquals(0, Activity::count());
+
+
     }
 
     /**
      * @test
      */
-    public function threads_can_be_deleted_only_by_users_with_permission()
+    function unauthorized_user_cant_delete_reply()
     {
-        // TODO
+        $this->withExceptionHandling();
+
+        $reply =create('App\Reply');
+
+        $this->delete("/replies/{$reply->id}")
+            ->assertRedirect('login');
+
+        $this->signIn()
+            ->delete("/replies/{$reply->id}")
+            ->assertStatus(403);
     }
+
+    /**
+     * @test
+     */
+    function authorized_user_can_delete_reply()
+    {
+        $this->signIn();
+
+        $reply =create('App\Reply', ['user_id' => auth()->id()]);
+
+        $this->delete("/replies/{$reply->id}")->assertStatus(302);;
+
+        $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
+    }
+
 }

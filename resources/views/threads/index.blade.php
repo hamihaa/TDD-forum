@@ -35,6 +35,9 @@
                     <p>Ni tem, ki ustrezajo tej kategoriji.</p>
                 @endforelse
             </div>
+                {{ $threads->appends($_GET)->links() }}
+
         </div>
     </div>
 @endsection
+

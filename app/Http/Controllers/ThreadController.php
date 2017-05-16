@@ -66,8 +66,8 @@ class ThreadController extends Controller
             'title' => request('title'),
             'body' => request('body')
         ]);
-
-        return redirect($thread->path());
+        return redirect($thread->path())
+            ->with('flash', 'Objava je bila uspešno dodana.');
     }
 
     /**
@@ -119,7 +119,7 @@ class ThreadController extends Controller
         $this->authorize('delete', $thread);
 
         \DB::transaction(function() use ($thread) {
-            $thread->replies()->delete();
+            $thread->replies->each->delete();
             $thread->delete();
         });
 
@@ -144,7 +144,7 @@ class ThreadController extends Controller
         }
 
         //calls scopeFilter from model and app/Filters/ThreadFilters
-        $threads = $threads->filter($filters)->get();
+        $threads = $threads->filter($filters)->paginate(10);
         return $threads;
     }
 }

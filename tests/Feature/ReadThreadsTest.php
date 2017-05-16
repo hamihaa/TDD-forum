@@ -72,7 +72,7 @@ class ReadThreadsTest extends TestCase
     }
 
     /** Testing that threads with 3, 2, 0 replies are in order
-     * @test */
+     *  */
     public function user_can_filter_threads_by_popular()
     {
         //thread, that is created by default with setUp

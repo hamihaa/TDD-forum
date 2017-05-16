@@ -15,6 +15,11 @@ class Reply extends Model
     //to eager load owner, favourites and  with every reply object
     protected $with = ['owner', 'favorites', 'thread'];
 
+    public function path()
+    {
+        return $this->thread->path() . "#reply-{$this->id}";
+    }
+
     /**
      * A reply has an owner.
      *

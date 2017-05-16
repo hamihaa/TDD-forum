@@ -24,6 +24,12 @@ trait RecordsActivity
                     $model->recordActivity($event);
                 });
             }
+
+        //on thread delete, also delete activity created for it
+        static::deleting(function ($model){
+            $model->activity()->delete();
+        });
+
     }
 
     /**
@@ -43,6 +49,16 @@ trait RecordsActivity
             'subject_id' => $this->id,
             'subject_type' => get_class($this)
         ]);
+    }
+
+    /**
+     * Fetch the activity relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function activity()
+    {
+        return $this->morphMany('App\Activity', 'subject');
     }
 
     protected function getActivityType($event)

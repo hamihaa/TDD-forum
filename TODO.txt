@@ -211,3 +211,66 @@ Review of series
     - extract activity feed to static method in Activity model
     - Activity::getUserActivity($user) accepts user and returns his feed to profileController show method
     - Carbon::now()->subWeek() return a week old date
+
+28. part fix bug and test on activity delete
+    - in RecordsActivity added static::deleting() in bootRecordsActivity, to listen for delete requests
+    -  to delete all replies for a thread use  $thread->replies->each->delete();
+    - test that there are 0 records in activity table
+    - $this->assertEquals(0, Activity::count());
+
+29. part Vue.js flash messaging Flash.vue
+    - vue files are stored in resources/assets/js/components folder
+    - npm install
+    -> install all dependencies from package.json
+    - resources/assets/app.js is main file, contains imports (by default imports bootstrap)
+    - bootstrap by default imports axios, jquery..
+    - includes global vue component - Example.vue
+    - after changes, use this
+    -> npm run dev, to compile everything
+    -> npm run watch
+
+    -VUE logic
+    - vue file can contain <template> <script> and <style>
+    - <flash> component in layouts/app
+    - v-show can be set to true or false
+    - function methods, data, created.
+    - hide or show after 3 seconds
+        setTimeout(() => {
+             this.show = false;
+        }, 3000);
+    - in bootstrap.js, register listener for session('flash')
+
+30.part added activity feed for FAVORITE
+    - morphTo relationship
+    - added Favorited to reply (return object)
+    - added #id to every reply, and routing directly to it from feed
+
+31. part Authorized Users Can Delete Reply
+    - created ReplyPolicy for Reply model
+    - with tests
+
+32. VUE reply component
+    - edit reply with inline value of text
+    - <reply inline-template>
+    - create Reply.vue file
+    - register it in app.js
+    -> Vue.component('reply', require('./components/Reply.vue'));
+    - v-if="editing" v-else to show and hide div
+    - @onclick="editing = true"
+    - data property called editing, manipulate its value from false to true to show textarea
+    - to send data to vue, in <reply> component, include :atributes="{{ $reply }}" : turns it into JSON
+    - to accept attributes in reply instance, use props: ['attributes'], it receives all data passed trough reply component
+    - v-model='body'
+    - on button @click="update" calls method from reply.vue component
+    - use axios library to submit patch request to given endpoint and send updated body
+    - test authorized_users_can_update_replies() and cant, checking for redirects, 403 or success
+    - v-text used to set value of html tag
+    - !! to hide popup of hidden inputs etc. on load !!
+    - !! give component a value v-cloak and in style: [v-cloak] { display: none}
+    - once everything is loaded, vue will remove v-cloak value
+
+33. ajax Vue delete button
+    - button @click="destroy"
+    - axios.delete
+    - in Reply destroy function, if request()->expectsJson() return response(['status' => 'odgovor izbrisan.']);
+    - after it's deleted, with jquery hide - $(this.$el).fadeOut(300), and flash msg after its deleted;

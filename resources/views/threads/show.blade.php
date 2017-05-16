@@ -20,7 +20,7 @@
 
                                 <!-- Button Form Input  -->
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-danger" required>Izbriši</button>
+                                        <button type="submit" class="btn btn-danger btn-sm" required>Izbriši</button>
                                     </div>
                             </form>
                             @endcan
