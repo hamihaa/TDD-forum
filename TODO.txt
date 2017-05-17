@@ -4,6 +4,7 @@ Review of series
     - php artisan make:model Reply -mr creates migration and resourceful controller, normal controller is -c
 
 2. part - TEST FOR FEATURES - created ThreadsTest
+
     - run test with phpunit
     - in phpunit.xml change values on bottom... add DB_CONNECTION value=sqlite and DB_DATABASE value=:memory:
     - add use DatabaseMigrations in class (because of sqlite)
@@ -274,3 +275,34 @@ Review of series
     - axios.delete
     - in Reply destroy function, if request()->expectsJson() return response(['status' => 'odgovor izbrisan.']);
     - after it's deleted, with jquery hide - $(this.$el).fadeOut(300), and flash msg after its deleted;
+
+34. ajax Vue favorite component
+    - dedicated component Favorite that is child of Reply template
+    - import favorite component in Reply.vue and specify it as a child component ->
+    - components: { Favorite }
+    -how to display property
+    -> use getFavoritesCountAttribute from Favorable and
+    -> protected $appends = ['favoritesCount'] in Reply, to add it to array on every load
+    - use it, to display number of likes on every reply in Vue...
+    - to declare class of button- liked, unliked, give button custom :class="classes", : means its computed in script part  ->
+    - computed: { classes() { .... }
+
+35. fixing bugs with activity feed when unfavorite reply
+    - instead         $this->favorites()->where($attributes)->delete();
+    - use $this->favorites()->where($attributes)->get()->each(function($favorite) {
+                      $favorite->delete();
+                  });
+    - or $this->favorites()->where($attributes)->get()->each->delete();
+    - you must delete a model, not just perform a sql query with query builder
+
+    fixing when you favorite a reply, and a reply gets deleted
+    - in trait favorable
+        protected static function bootFavorable()
+            {
+                static::deleting(function ($model) {
+                   $model->favorites->each->delete();
+                });
+            }
+
+  36. Data-centric Approach
+    - refactoring code around vue

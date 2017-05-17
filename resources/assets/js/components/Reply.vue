@@ -1,6 +1,10 @@
 <script>
+    import Favorite from './Favorite.vue'
+
     export default {
         props: ['attributes'],
+
+        components: { Favorite },
 
         data() {
             return {
@@ -23,7 +27,7 @@
                 axios.delete('/replies/' + this.attributes.id);
 
                 $(this.$el).fadeOut(300, () => {
-                    flash('Komentar je bil odstranjen.')
+                    flash('Komentar je odstranjen.')
                 });
             }
         }

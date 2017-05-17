@@ -11,7 +11,7 @@
                 </h1>
             </div>
 
-            @foreach($activities as $date => $record)
+            @forelse($activities as $date => $record)
                 <h3>
                     {{$date}}
                 </h3>
@@ -20,7 +20,9 @@
                         @include("profiles.activities.{$activity->type}")
                     @endif
                 @endforeach
-            @endforeach
+                @empty
+                Uporabnik nima preteklih aktivnosti.
+            @endforelse
         </div>
         </div>
     </div>

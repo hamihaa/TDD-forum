@@ -6,14 +6,15 @@
                         {{ $reply->owner->name }}</a>,
                           {{ $reply->created_at->diffForHumans() }}
                 </h5>
-            <form method="POST" action="/replies/{{ $reply->id }}/favorite">
-                {{ csrf_field() }}
-                <button type="submit" class="btn btn-default" {{ $reply->isFavorited() ? 'disabled' : '' }}>
-                    {{ $reply->favorites_count }}
-                </button>
-            </form>
 
+            <div>
 
+            </div>
+            @if(Auth::check())
+                <div>
+                    <favorite :reply="{{ $reply }}"></favorite>
+                </div>
+            @endif
         </div>
 
         <div class="panel-footer">

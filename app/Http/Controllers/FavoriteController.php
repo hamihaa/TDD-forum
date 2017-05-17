@@ -20,9 +20,12 @@ class FavoriteController extends Controller
          * Reply->addFavorite(request())
          * in addFavorite do -> $this->favorites()->attach(...)
          */
-
         $reply->addFavorite();
-        return back();
-
     }
+
+    public function destroy(Reply $reply)
+    {
+        $reply->unFavorite();
+    }
+
 }

@@ -1,6 +1,6 @@
 <template>
     <div class="alert alert-success alert-flash" v-show="show" role="alert">
-      <strong>Bravo!</strong> {{ body }}
+      <strong>{{ body }}</strong>
     </div>
 </template>
 

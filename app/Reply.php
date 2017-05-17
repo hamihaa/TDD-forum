@@ -15,6 +15,10 @@ class Reply extends Model
     //to eager load owner, favourites and  with every reply object
     protected $with = ['owner', 'favorites', 'thread'];
 
+    //adds custom attributes to an array everytime Reply is casted
+    protected $appends = ['favoritesCount', 'isFavorited'];
+
+
     public function path()
     {
         return $this->thread->path() . "#reply-{$this->id}";

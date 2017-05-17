@@ -18,7 +18,7 @@ class Thread extends Model
     {
         parent::boot();
 
-        //replies_count is always available whne calling $thread object
+        //replies_count is always available when calling $thread object
         static::addGlobalScope('replyCount', function($builder){
             $builder->withCount('replies');
         });
