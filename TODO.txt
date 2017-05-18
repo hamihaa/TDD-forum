@@ -1,4 +1,6 @@
 Review of series
+    To clear cache after changes (to refresh cached data of categories from appservice):
+    php artisan cache:clear
 1. part - SETUP
     - database/factories is used for generating test objects with tinker: factory('App\Thread', 5)->create()
     - php artisan make:model Reply -mr creates migration and resourceful controller, normal controller is -c
@@ -277,7 +279,7 @@ Review of series
     - after it's deleted, with jquery hide - $(this.$el).fadeOut(300), and flash msg after its deleted;
 
 34. ajax Vue favorite component
-    - dedicated component Favorite that is child of Reply template
+    - dedicated component Favorite that is child of Reply component
     - import favorite component in Reply.vue and specify it as a child component ->
     - components: { Favorite }
     -how to display property
@@ -304,5 +306,133 @@ Review of series
                 });
             }
 
-  36. Data-centric Approach
+36. Data-centric Approach
+    $emit -- dispatches the event upwards through the scope hierarchy.
+    - Reply is child of Replies, using events -> $emit will comunicate to parents, $broadcast will comunicate downwards
+    - parents pass down data to child with :data= value example in replies, <reply data="reply"></reply>
+    - @deleted='remove(index)' in parent, parent listents to $emit from child @deleted is action
+    - when deleted, $emit to parent -> this.$emit('deleted', this.data.id);
+    - 1. param, 'deleted' specifies the action
     - refactoring code around vue
+    - creating replies component in threads/show view
+    - Replies.vue contains Reply.vue
+    <div v-for="(reply, index) in items" :key="reply.id">
+        <reply></reply>
+    </div>
+    -create pages/Thread.vue for single usage
+    - inline template means it's part of blade view, but has script logic in seperate vue file
+    -  components: { Replies }, declares child components used in template
+    - took Reply component from inline to template in Reply.vue. fixed all laravel specific code
+    refactoring fom lvl to vue
+    - declare data in data() method by id: this.data.id ...
+    - in view id="reply-{{ $reply->id }}" is :id="'reply-'+id"
+    - automatic update replies count: <span v-text="repliesCount"></span> in view
+    - in Thread.vue define repliesCount and props, pass data from view template with
+    -> :initial-replies-count="{{ $thread->replies_count }}" in <thread-view>
+    - when deleted, this.$emit('removed') in Replies.vue method
+    -  @if(Auth::check()) put to js, go to app.blade
+    - <script>
+         window.Laravel = {!! json_encode([
+             'csrfToken' => csrf_token(),
+             'signedIn' => Auth::check(),
+             'user' => Auth::user()
+         ]) !!};
+       </script>
+    -in vue, <div v-if="signedIn">
+    - computed: {
+                 signedIn() {
+                     return window.Laravel.signedIn;
+                 }
+             }
+    - to share across all vue instances, use bootstrap and example
+    Vue.prototype.authorize = function (handler) {
+        //additional admin privileges
+        return handler(window.Laravel.user);
+    }
+
+37. part creating New Reply Form
+    - CSRF field is always applied as a header in ajax requests (check bootstrap.js)
+
+38. part Vue Pagination
+    - to fix the deletion of replies:
+            <div v-for="(reply, index) in items" :key="reply.id">
+    - every object needs a key with id
+    - DATE FORMAT in vue - Moment.js library, same as carbon for laravel
+    - change language :
+           moment.locale('sl');
+                    return moment(this.data.created_at).fromNow();
+
+    - npm install moment --save
+    - in Reply.vue import moment from 'moment';
+    - how to SEND TIME TO TEMPLATE, COMPUTE it there, and SEND BACK to display:
+    - in template send data getago="{{ $thread->created_at }}"
+    - in vue,
+     props: ['getago'],
+     computed: {
+                         postedAt() {
+                             moment.locale('sl');
+                             return moment(this.getago).fromNow();
+                         },
+                }
+     -  to display <span v-text="postedAt"></span>
+
+    -PAGINATION
+    - paginator is a part of replies component, which determines data, url, refreshes data
+    - creating custom pagination component with bootstrap
+    - for axios pagination, you must do requests inside vue
+    - from template remove data and in vue remove props: ['data'], instead make in methods:
+         fetch() {
+                axios.get(this.url)
+                        .then(this.refresh);
+          },
+          refresh(response) {
+          }
+    - created() {
+        this.fetch();
+    }
+    - in r/web create new route for ajax request of replies
+    - Route::get('/threads/{category}/{thread}/replies', 'ReplyController@index');
+    - test in ReadThreadsTest - user_can_request_all_replies_for_a_thread()
+    - cause replies get requested by ajax, there is no need that controller neesd to load it too
+    - add and remove were moved from replies.vue to mixins/Collection.js
+    - in vue, MIXIN is same as trait in laravel
+    - to enherit methods from collection file
+        import collection from '../mixins/Collection.js'
+        mixins: [collection],
+
+    - created new component Paginator
+    - to be used anywhere, declare it globally in app.js
+    - dataSet for paginator is sent trough replies.vue, where <paginator>
+    - in paginator, refresh dataset when it's updated. watch: { dataset() {
+    - when click on next or previous, broadcast up to parent for update and update url
+            page() {
+                this.broadcast().updateUrl();
+            }
+            methods: broadcast() { this.$emit('updated', this.page);
+
+39. Filtering threads by unanswered
+    - test in readthreadstest.php
+    - new ThreadFilter unanswered
+    - in model thread, from boot() remove static:addglobalscope('replyCount'), instead put replies_count in database with threads
+    - every time a reply is stored, column must be updated in threads table
+    - easy solution, in addReply add
+    ->  $this->increment('replies_count');
+              return $reply;
+    - but it works only when calling addReply, if created with factory wont ++
+    - better option for updating REPLIES_COUNT
+    - in Reply model:
+    protected static function boot()
+        {
+            parent::boot();
+
+            static::created(function ($reply){
+               $reply->thread->increment('replies_count');
+            });
+
+            static::deleted(function ($reply){
+                           $reply->thread->decrement('replies_count');
+                        });
+        }
+
+    - test : $this->assertEquals(1, $thread->fresh()->replies_count);
+

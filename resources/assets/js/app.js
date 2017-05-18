@@ -15,8 +15,14 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+//global components
+//flash used for notifications
 Vue.component('flash', require('./components/Flash.vue'));
-Vue.component('reply', require('./components/Reply.vue'));
+//thread-view used in threads.show as inline template
+Vue.component('thread-view', require('./pages/Thread.vue'));
+//global pagination
+Vue.component('paginator', require('./components/Paginator.vue'))
+
 
 const app = new Vue({
     el: '#app'

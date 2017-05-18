@@ -35,17 +35,6 @@ class ReadThreadsTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_read_replies_on_a_thread()
-    {
-        //generates 1 reply for our test thread
-        $reply = create('App\Reply' ,['thread_id' => $this->thread->id]);
-        //go to thread page
-        $response = $this->get($this->thread->path());
-        //check if request has the body of reply on our thread
-        $response->assertSee($reply->body);
-    }
-
-    /** @test */
     public function a_user_can_filter_threads_by_tag()
     {
         $category = create('App\Category');
@@ -72,7 +61,7 @@ class ReadThreadsTest extends TestCase
     }
 
     /** Testing that threads with 3, 2, 0 replies are in order
-     *  */
+     *  @test */
     public function user_can_filter_threads_by_popular()
     {
         //thread, that is created by default with setUp
@@ -91,4 +80,37 @@ class ReadThreadsTest extends TestCase
         //should return from most to least popular
         $this->assertEquals([3, 2, 0], array_column($response, 'replies_count'));
     }
+
+    /** Testing that one thread is shown and other - with replies, not
+     * @test
+     *  */
+    public function user_can_filter_threads_by_unanswered()
+    {
+        //thread, that is created by default with setUp
+        $thread = create('App\Thread');
+        create('App\Reply', ['thread_id' => $thread->id]);
+
+        $response = $this->getJson('/threads?unanswered=1')->json();
+
+        $this->assertCount(1, $response);
+    }
+
+
+    /**
+     * for ajax rendering and pagination
+     * @test
+     */
+    public function user_can_request_all_replies_for_a_thread()
+    {
+        //create thread and 2 replies associated with it
+       $thread =  create('App\Thread');
+        create('App\Reply', ['thread_id' => $thread->id], 2);
+
+        $response = $this->getJson($thread->path() . '/replies')->json();
+
+        $this->assertCount(2, $response['data']);
+        $this->assertEquals(2, $response['total']);
+
+    }
+
 }

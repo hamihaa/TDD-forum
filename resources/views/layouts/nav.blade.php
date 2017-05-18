@@ -29,6 +29,7 @@
                             <li><a href="/threads?by={{ auth()->user()->name }}">Moje objave</a></li>
                         @endif
                         <li><a href="/threads?popular=1">Objave z največ odgovori</a></li>
+                        <li><a href="/threads?unanswered=1">Objave brez odgovorov</a></li>
                     </ul>
                 </li>
 

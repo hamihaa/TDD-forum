@@ -41,16 +41,17 @@ class ParticipateInForumTest extends TestCase
     {
         //can use following syntax, if utilities/functions.php is not created
         //$user = factory('App\User')->create();
-        $user = create('App\User');
-        $this->be($user);
+        $this->signIn();
 
         $thread = create('App\Thread');
 
         $reply = make('App\Reply');
+
         $this->post($thread->path() . '/replies', $reply->toArray());
 
-        $this->get($thread->path())
-        ->assertSee($reply->body);
+        $this->assertDatabaseHas('replies', ['body' => $reply->body] );
+        //check that counter has updated
+        $this->assertEquals(1, $thread->fresh()->replies_count);
     }
 
     public function a_reply_requires_a_body()

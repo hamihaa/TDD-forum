@@ -80,8 +80,9 @@ class ThreadController extends Controller
     public function show($categoryId, Thread $thread)
     {
         return view('threads.show', [
-            'thread' => $thread,
-            'replies' => $thread->replies()->paginate(10) ]);
+            'thread' => $thread]);
+        //dont need replies, because it gets requested on frontend with vue
+        //'replies' => $thread->replies()->paginate(10)
     }
 
     /**
@@ -138,13 +139,13 @@ class ThreadController extends Controller
      */
     public function getThreads(Category $category, ThreadFilters $filters)
     {
-        $threads = Thread::latest();
+        //calls scopeFilter from model and app/Filters/ThreadFilters
+        $threads = Thread::latest()->filter($filters);
+
         if ($category->exists) {
             $threads->where('category_id', $category->id);
         }
 
-        //calls scopeFilter from model and app/Filters/ThreadFilters
-        $threads = $threads->filter($filters)->paginate(10);
-        return $threads;
+        return $threads->paginate(10);
     }
 }

@@ -18,10 +18,12 @@ class Thread extends Model
     {
         parent::boot();
 
-        //replies_count is always available when calling $thread object
+        /*replies_count is always available when calling $thread object
+        /* replaced by updating migration for threads table, added replies_count
         static::addGlobalScope('replyCount', function($builder){
             $builder->withCount('replies');
         });
+        */
     }
 
     /**
@@ -69,10 +71,11 @@ class Thread extends Model
      * Add a reply to the thread.
      *
      * @param $reply
+     * @return Model
      */
     public function addReply($reply)
     {
-        $this->replies()->create($reply);
+        return $this->replies()->create($reply);
     }
 
 

@@ -28,6 +28,14 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Vue = require('vue');
 window.events = new Vue();
 
+
+//to share across all vue instances, use bootstrap and example
+Vue.prototype.authorize = function (handler) {
+    //additional admin privileges
+    let user = window.Laravel.user;
+    return user ? handler(user) : false;
+}
+
 window.flash = function (message) {
     window.events.$emit('flash', message);
 };
