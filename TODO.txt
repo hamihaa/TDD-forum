@@ -436,3 +436,35 @@ Review of series
 
     - test : $this->assertEquals(1, $thread->fresh()->replies_count);
 
+40. subscribing to thread unit test
+    - unit test test a_thread_can_be_subscribed_to
+    - testing model behaviour
+    - new model ThreadSubscription
+    - in Thread, add subscribe, unsubscribe and subscriptions
+    -in migration, to cascade delete:
+     -> $table->foreign('thread_id')
+                ->references('id')
+                ->on('threads')
+                ->onDelete('cascade');
+
+41. subscribing to thread feature test
+    - SubscribeToThreadsTest
+    - testing functionalities and paths
+    - threadsubscriptioncontroller
+    - on subscribe, give notification
+
+42. adding UI for subscription
+    - SubscribeButton.vue
+    - to allow only 1. subscription, in migrations $table->unique(['thread_id', 'user_id']);
+    - send post request for subscr.
+    - button has property :class, which is computed based on active property, passed trough threads/show view
+    - to add attribute to thread:
+     1. protected $appends = ['isSubscribedTo'],
+     2. in model create a function
+    !!! -> public function getIsSubscribedToAttribute()
+        this returns isSubscribedTo attribute !!! returns boolean
+    - return $this->subscriptions()->where('user_id', auth()->id())
+                  ->exists();
+     3.  <subscribe-button :active="{{ $thread->isSubscribedTo  ? 'true' : 'false' }}"></subscribe-button>
+        or json_encode($thread->isSubscribedTo)
+    - to unsub, check for active status and set axios.  delete or post

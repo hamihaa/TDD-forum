@@ -14,6 +14,7 @@
                                     </a>
                                     <h4>{{ $thread->title }}</h4>
                                 </span>
+
                             @can('delete', $thread)
                                 <form action="{{$thread->path()}}" method="POST">
                                     {{ csrf_field() }}
@@ -70,8 +71,12 @@
                                 Objavil <a href="/profiles/{{ $thread->creator->name }}"> {{ $thread->creator->name }} </a> <span v-text="postedAt"></span>
                                 <br> število komentarjev: <span v-text="repliesCount"></span>
                             </p>
+                            <p>
+                                <subscribe-button :active="{{  json_encode($thread->isSubscribedTo) }}"></subscribe-button>
+                            </p>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

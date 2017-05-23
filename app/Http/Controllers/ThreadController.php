@@ -146,6 +146,7 @@ class ThreadController extends Controller
             $threads->where('category_id', $category->id);
         }
 
-        return $threads->paginate(10);
+        //use paginate(10) instead get if needed, and uncomment links() in view
+        return $threads->get();
     }
 }

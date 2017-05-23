@@ -1,12 +1,14 @@
 <script>
     import Replies from '../components/Replies.vue'
     import moment from 'moment-timezone';
+    import SubscribeButton from '../components/SubscribeButton.vue';
+
 
     export default {
 
         props: ['initialRepliesCount', 'getago'],
 
-        components: { Replies },
+        components: { Replies, SubscribeButton },
 
         computed: {
             postedAt() {
