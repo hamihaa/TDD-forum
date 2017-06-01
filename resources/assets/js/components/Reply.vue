@@ -29,18 +29,17 @@
 
 
         <!-- @can('delete', $reply) -->
-        <div class="panel-content level" v-if="canUpdate">
-            <button class="btn btn-link btn-sm" @click="editing = true">
+        <div class="panel-content level">
+            <button class="btn btn-link btn-sm" v-if="canUpdate" @click="editing = true">
                 Uredi
                 <span class="glyphicon glyphicon-pencil"></span>
             </button>
-
-            <button class="btn btn-link btn-sm mr-1" @click="destroy">
+        </div>
+            <button class="btn btn-link btn-sm mr-1" v-if="canDelete|canUpdate" @click="destroy">
                 Odstrani komentar
                 <span class="glyphicon glyphicon-trash"></span>
             </button>
 
-        </div>
         <!--  @endcan> -->
     </div>
 </template>
@@ -74,7 +73,10 @@
 
             canUpdate() {
                 return this.authorize(user => this.data.user_id == user.id)
+            },
 
+            canDelete() {
+                return this.authorize(user => this.data.thread.creator.id == user.id)
             }
         },
 

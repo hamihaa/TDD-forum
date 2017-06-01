@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Events\ThreadHasNewReply;
+use App\Notifications\ThreadWasUpdated;
 use App\Traits\Favorable;
 use App\Traits\RecordsActivity;
 use Illuminate\Database\Eloquent\Model;
@@ -71,27 +73,39 @@ class Thread extends Model
 
     /**
      * Add a reply to the thread.
+     * On add, also create notification for all users
      *
      * @param $reply
      * @return Model
      */
     public function addReply($reply)
     {
-        return $this->replies()->create($reply);
+        $reply = $this->replies()->create($reply);
+
+        //make an announcement that thread has new reply, it is caught in eventserviceprovider by listener
+        event(new ThreadHasNewReply($this, $reply));
+
+        return $reply;
     }
-
-
 
     public function scopeFilter($query, $filters)
     {
         return $filters->apply($query);
     }
 
+    /**
+     * Subscribe user to this thread
+     *
+     * @param null $userId
+     * @return $this
+     */
     public function subscribe($userId = null)
     {
         $this->subscriptions()->create([
            'user_id' => $userId? : auth()->id()
         ]);
+
+        return $this;
     }
 
 

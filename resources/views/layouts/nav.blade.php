@@ -12,7 +12,7 @@
 
             <!-- Branding Image -->
             <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.name', 'Laravel') }}
+                Predlagam vladi
             </a>
         </div>
 
@@ -24,12 +24,12 @@
                         Razišči<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="/threads">Vse objave</a></li>
+                        <li><a href="/threads">Vsi predlogi</a></li>
                         @if(Auth::check())
-                            <li><a href="/threads?by={{ auth()->user()->name }}">Moje objave</a></li>
+                            <li><a href="/threads?by={{ auth()->user()->name }}">Moji predlogi</a></li>
                         @endif
-                        <li><a href="/threads?popular=1">Objave z največ odgovori</a></li>
-                        <li><a href="/threads?unanswered=1">Objave brez odgovorov</a></li>
+                        <li><a href="/threads?popular=1">Predlogi z največ odgovori</a></li>
+                        <li><a href="/threads?unanswered=1">Predlogi brez odgovorov</a></li>
                     </ul>
                 </li>
 
@@ -42,7 +42,7 @@
                     </ul>
                 </li>
                 @if(Auth::check())
-                    <li><a href="/threads/create">Ustvari objavo</a></li>
+                    <li><a href="/threads/create">Ustvari predlog</a></li>
                 @endif
             </ul>
 
@@ -53,6 +53,7 @@
                     <li><a href="{{ route('login') }}">Prijava</a></li>
                     <li><a href="{{ route('register') }}">Registracija</a></li>
                 @else
+                    <user-notifications></user-notifications>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                             {{ Auth::user()->name }} <span class="caret"></span>

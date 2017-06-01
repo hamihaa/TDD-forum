@@ -66,6 +66,9 @@ class ThreadController extends Controller
             'title' => request('title'),
             'body' => request('body')
         ]);
+
+        $thread->subscribe();
+
         return redirect($thread->path())
             ->with('flash', 'Objava je bila uspešno dodana.');
     }

@@ -12,6 +12,9 @@
 */
 
 Auth::routes();
+Route::get('login/github', 'Auth\LoginController@redirectToProvider');
+Route::get('login/github/callback', 'Auth\LoginController@handleProviderCallback');
+
 Route::get('/', function() {
    return redirect('/threads');
 });
@@ -41,3 +44,5 @@ Route::post('/replies/{reply}/favorite', 'FavoriteController@store');
 Route::delete('/replies/{reply}/favorite', 'FavoriteController@destroy');
 
 Route::get('profiles/{user}', 'ProfileController@show');
+Route::get('profiles/{user}/notifications', 'UserNotificationController@index');
+Route::delete('profiles/{user}/notifications/{notification}', 'UserNotificationController@destroy');

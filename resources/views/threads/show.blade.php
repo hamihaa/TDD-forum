@@ -72,11 +72,12 @@
                                 <br> število komentarjev: <span v-text="repliesCount"></span>
                             </p>
                             <p>
+                                @if(Auth::check())
                                 <subscribe-button :active="{{  json_encode($thread->isSubscribedTo) }}"></subscribe-button>
+                                @endif
                             </p>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

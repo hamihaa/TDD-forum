@@ -111,6 +111,7 @@ Review of series
 
 //TODO: Refactor Pixtr according to part 15 and 16 from this series
 // TODO: use policies on pixtr- part 24
+// TODO: add socialite to existing auth
 
 16. part REPLIES COUNT FOR EVERY THREAD, sidebar with meta details on threads, pagination
     - add GLOBAL QUERY SCOPE to Thread class, protected static function boot()
@@ -468,3 +469,82 @@ Review of series
      3.  <subscribe-button :active="{{ $thread->isSubscribedTo  ? 'true' : 'false' }}"></subscribe-button>
         or json_encode($thread->isSubscribedTo)
     - to unsub, check for active status and set axios.  delete or post
+
+43. Laravel Notifications - creating and deleting
+    - can be used for mail, database, SMS, also at once
+    - create with php artisan notifications:table
+    - has methods readNotifications and unreadNotifications built in
+    - notification is linked to USER
+    -> example: when user leaves a reply
+    $subscription->user->notify(new ThreadWasUpdated($this, $reply));
+    - php artisan make:notification ThreadWasUpdated
+    - it creates Notification folder with classes
+    - pass the thread and reply to construct
+    - via defines channel, can set 'mail', 'database', '...'
+    - toArray defines the content of notification -> what will be saved to data variable in notifications table
+    -> saved as json
+    - Notifiable trait, out of the box added to User class
+    -> with HasDatabaseNotifications and RoutesNotifications
+    - then migrate
+    - https://laravel.com/docs/5.4/notifications
+    - to Thread class, in addReply, also add foreach loop over all subscribers and send them new ThreadWasUpdated
+    //create a notification for all subs -> ThreadWasUpdated
+            foreach ($this->subscriptions as $subscription) {
+                //creating notification for all users but the owner of reply!
+                if($reply->user_id !=  $subscription->user_id) {
+                    //$this = thread
+                    $subscription->user->notify(new ThreadWasUpdated($this, $reply));
+                }
+            }
+    - OR
+    $this->subscriptions
+                  ->where('user_id', '!=', $reply->user_id)
+                  ->each->notify($reply);
+
+    - in code, collection pipeline is used as solution instead of ^
+    - notify is created in ThreadSubscription model class
+
+    TESTING
+    - php artisan make:test NotificationsTest
+    - testing a delete / clear notification after read
+    - instead hard deleting, use markAsRead() on notification, that way you can change back to unread
+
+44. refactoring
+    - Illuminate\Notifications\DatabaseNotification has classes read, unread, markAsRead...
+    - created ModelFactory for notification class -> Illuminate\Notifications\DatabaseNotification
+
+45. VUE user-notifications component
+    - add it to navbar view
+    - register global component user-notifications in app.js
+    - store notifications in var
+    - with loop, display notifications
+    - @click="markAsRead(notification)
+
+
+46. creating an event listener for Notifications -> USING EVENTS and LISTENERS
+    - use them, when there is too much code in one function, else go easy mode
+    - event = something happens, takes parameters and inits them
+    - listener = is waiting for an event to happen (in eventserviceprovider),
+    -> takes event as param
+    - in Thread model, function addReply, add event(new ThreadHasNewReply($this, $reply));
+    - in EventServiceProvider add new listener -> when event ThreadHasNewReply is triggered, call listener NotifyThreadSubscribers
+    !!! ->  protected $listen = [
+              'App\Events\ThreadHasNewReply' => [
+                  'App\Listeners\NotifyThreadSubscribers',
+              ],
+    !!!      ];
+    - php artisan event:generate  Generate the missing events and listeners based on registration
+    -> creates the ones registered, but not yet created
+    - creates \Events and \Listeners
+    - event stores the data
+    - listener handles the event in function handle(ThreadHasNewReply $event)
+    EASY MODE: inside controller, make notifySubscribers($reply) with same logic as handle in listener, and call it
+    -> $this->notifySubscribers($reply) instead of event(new ThreadHasNewReply($this, $reply));
+
+47. notification fakes
+    - thread_notifies_all_registered_subs_when_a_reply_is_added
+    - replace underlying instance with a fake version
+    -> Illuminate\Support\Facades\Notification::fake();
+    - check if notification was sent, with
+    -> Notification::assertSentTo(auth()->user(), ThreadWasUpdated::class);
+

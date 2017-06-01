@@ -50,7 +50,6 @@ $factory->define(App\Reply::class, function ($faker) {
     ];
 } );
 
-
 //factory faker for generating categories
 $factory->define(App\Category::class, function ($faker) {
     $name = $faker->word;
@@ -58,5 +57,19 @@ $factory->define(App\Category::class, function ($faker) {
     return [
         'name' => $name,
         'slug' => $name
+    ];
+} );
+
+//factory for notifications
+$factory->define(\Illuminate\Notifications\DatabaseNotification::class, function ($faker) {
+
+    return [
+        'id' => \Ramsey\Uuid\Uuid::uuid4()->toString(),
+        'type' => 'App\Notifications\ThreadWasUpdated',
+        'notifiable_id' => function () {
+            return auth()->id() ?: factory('App\User')->create()->id;
+        },
+        'notifiable_type' => 'App\User',
+        'data' => ['foo' => 'bar']
     ];
 } );
