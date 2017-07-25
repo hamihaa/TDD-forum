@@ -24,6 +24,11 @@ class ThreadPolicy
         }
     }
 
+    public function vote(User $user, Thread $thread)
+    {
+        return $thread->thread_status_id == 2 || $thread->thread_status_id == 3;
+    }
+
     /**
      * Determine whether the user can view the thread.
      *
@@ -57,6 +62,11 @@ class ThreadPolicy
     public function update(User $user, Thread $thread)
     {
         return $thread->user_id == $user->id;
+    }
+
+    public function editBody(User $user, Thread $thread)
+    {
+        return $thread->thread_status_id == 1 || $thread->thread_status_id == 2 && $thread->user_id == $user->id;
     }
 
     /**

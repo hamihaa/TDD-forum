@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -16,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'last_login'
     ];
 
     /**
@@ -38,6 +39,14 @@ class User extends Authenticatable
         return 'name';
     }
 
+    /** use for validation
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->name == 'admin';
+    }
+
     public function threads()
     {
         return $this->hasMany('App\Thread')->latest();
@@ -47,4 +56,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Activity::class);
     }
+
+    /*
+     * Returns number of active users
+     */
+    public static function numberOfActiveUsers()
+    {
+        $total = static::where('last_login', '>=', Carbon::now()->subMonth())->count();
+        return $total;
+    }
+
 }

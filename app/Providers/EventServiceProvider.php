@@ -15,7 +15,17 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         'App\Events\ThreadHasNewReply' => [
             'App\Listeners\NotifyThreadSubscribers',
+            'App\Listeners\NotifyMentionedUsers'
         ],
+
+        'App\Events\ThreadBodyWasUpdated' => [
+          'App\Listeners\NotifyAllWhoVoted'
+        ],
+
+        'Illuminate\Auth\Events\Login' => [
+            'App\Listeners\Users\UpdateLastLoggedInAt',
+        ],
+
     ];
 
     /**
@@ -26,7 +36,5 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
-        //
     }
 }

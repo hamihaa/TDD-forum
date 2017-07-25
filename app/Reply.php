@@ -52,4 +52,11 @@ class Reply extends Model
         return $this->belongsTo('App\Thread');
     }
 
+    public function setBodyAttribute($body)
+    {
+        $this->attributes['body'] = preg_replace(
+                        '/@([\w\-]+)/',
+                        '<a href="/profiles/$1">$0</a>',
+                        $body);
+    }
 }

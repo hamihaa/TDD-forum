@@ -6,6 +6,7 @@
  */
 
 require('./bootstrap');
+require('./JQCloud');
 
 window.Vue = require('vue');
 
@@ -21,10 +22,11 @@ Vue.component('flash', require('./components/Flash.vue'));
 //thread-view used in threads.show as inline template
 Vue.component('thread-view', require('./pages/Thread.vue'));
 //global pagination
-Vue.component('paginator', require('./components/Paginator.vue'))
-Vue.component('user-notifications', require('./components/UserNotifications.vue'))
+Vue.component('paginator', require('./components/Paginator.vue'));
+Vue.component('user-notifications', require('./components/UserNotifications.vue'));
+Vue.component('tag-cloud', require('./cloud/Tagcloud.vue'));
+Vue.component('date-picker', require('./datepicker/Datepicker.vue'));
 
 const app = new Vue({
     el: '#app'
 });
-

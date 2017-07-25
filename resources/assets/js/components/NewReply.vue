@@ -1,8 +1,8 @@
 <template>
     <div>
         <div v-if="signedIn">
-        <div class="panel-heading">Dodaj komentar</div>
-               <div class="form-group">
+            <div class="panel-heading">Dodaj komentar</div>
+            <div class="form-group">
                     <textarea class="form-control"
                               name="body"
                               id="body"
@@ -13,7 +13,7 @@
                     </textarea>
             </div>
 
-          <div class="form-group">
+            <div class="form-group">
                 <button type="submit"
                         class="btn btn-primary"
                         @click="addReply">
@@ -30,6 +30,10 @@
 
 
 <script>
+    //for tagging
+    import 'jquery.caret';
+    import 'at.js';
+
     export default {
 
         data() {
@@ -44,6 +48,20 @@
             }
         },
 
+        mounted() {
+          $('#body').atwho({
+             at: '@',
+              delay: 750,
+              callbacks: {
+                 remoteFilter: function(query, callback) {
+                     $.getJSON('/api/user', {name:query}, function(usernames){
+                         callback(usernames)
+                     })
+                 }
+              }
+          });
+        },
+
         methods: {
             addReply() {
                 axios.post(location.pathname + '/replies'
@@ -51,7 +69,7 @@
                         .then(response => {
                             this.body = '';
 
-                            flash('Objva uspešno dodana.');
+                            flash('Objava uspešno dodana.');
 
                             this.$emit('created', response.data);
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\YouWereMentioned;
 use App\Reply;
+use App\User;
 use Illuminate\Http\Request;
 use App\Thread;
 
@@ -33,14 +35,10 @@ class ReplyController extends Controller
             'body' => 'required'
         ]);
 
-        $reply = $thread->addReply([
+        return $thread->addReply([
             'body' => request('body'),
             'user_id' => auth()->id()
-        ]);
-
-        if(request()->expectsJson()){
-            return $reply->load('owner');
-        }
+        ])->load('owner');
 
         return back()->with('flash', 'Vaš komentar je bil uspešno dodan.');
     }
@@ -77,6 +75,10 @@ class ReplyController extends Controller
     public function update(Request $request, Reply $reply)
     {
         $this->authorize('update', $reply);
+        $this->validate(request(), [
+            'body' => 'required'
+        ]);
+
         $reply->update(['body' => request('body')]);
     }
 

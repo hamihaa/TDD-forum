@@ -1,7 +1,8 @@
 <template>
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-bell"></span>
+                <!-- , 'has-notification' :  notifications.length -->
+                <span :class="{'glyphicon glyphicon-bell' : true, 'has-notification' : notifications.length }"></span>
             </a>
 
             <ul class="dropdown-menu" v-if="notifications.length">
@@ -13,8 +14,8 @@
                 </li>
             </ul>
             <ul class="dropdown-menu" v-else>
-                <li>
-                   <span class="glyphicon glyphicon-sad"></span> Ni novih obvestil.
+                <li style="padding:10px">
+                    Ni novih obvestil.
                 </li>
             </ul>
         </li>
@@ -42,5 +43,4 @@
 </script>
 
 <style>
-
 </style>

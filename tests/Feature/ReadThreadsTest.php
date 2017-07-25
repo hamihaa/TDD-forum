@@ -23,7 +23,7 @@ class ReadThreadsTest extends TestCase
     {
         $response = $this->get('/threads');
         //$response->assertStatus(200);
-        $response->assertSee($this->thread->body);
+        $response->assertSee($this->thread->body, 20);
     }
 
     /** @test */

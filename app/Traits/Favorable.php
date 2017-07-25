@@ -55,6 +55,7 @@ trait Favorable
     {
         return $this->isFavorited();
     }
+
     /**
      * returns count of favourites for every reply
      */

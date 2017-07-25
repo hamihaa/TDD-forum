@@ -22,6 +22,8 @@
         ]) !!};
     </script>
 
+    @yield('header')
+
     <style>
         body {  padding-bottom: 100px ;  }
         .level { display: flex; align-items: center;}
@@ -39,5 +41,8 @@
     </div>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+
+    @yield('scripts')
+
 </body>
 </html>

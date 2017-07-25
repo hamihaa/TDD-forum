@@ -45,6 +45,22 @@ class ThreadTest extends TestCase
         $this->assertInstanceOf('App\User', $this->thread->creator);
     }
 
+    /** @test  */
+    public function a_thread_belongs_to_a_status()
+    {
+        $thread = create('App\Thread');
+
+        $this->assertInstanceOf('App\ThreadStatus', $thread->status);
+    }
+
+    /** @test  */
+    public function a_thread_belongs_to_many_tags()
+    {
+        $thread = create('App\Thread');
+
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $this->thread->tags);
+    }
+
     /**
      * adds a reply to a thread,
      * checks if reply exists

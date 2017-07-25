@@ -522,6 +522,8 @@ Review of series
 
 
 46. creating an event listener for Notifications -> USING EVENTS and LISTENERS
+    (najlažji način je da v controllerju ali modelu zraven pokličeš takoj notification)
+    - daljši način je z events & listeners
     - use them, when there is too much code in one function, else go easy mode
     - event = something happens, takes parameters and inits them
     - listener = is waiting for an event to happen (in eventserviceprovider),
@@ -548,3 +550,176 @@ Review of series
     - check if notification was sent, with
     -> Notification::assertSentTo(auth()->user(), ThreadWasUpdated::class);
 
+
+56. mention users #1
+without tests, must fix the migrations factory, have new columns in database
+v replycontroller se kliče YouWereMentioned notification class
+php artisan make:notification YouWereMentioned
+
+57. mention users #2
+    daljši način z events & listeners & notifications
+    v Reply modelu znotraj addReply pokliče event
+    php artisan event:generate zgenerira listenerje in evente, ki so v eventserviceprovider v $listen, in še ne obstajajo
+
+61. username autocompletion: part 2
+npm install at.js --save
+npm install jquery.caret --save
+
+copy css file from node_modules/at.js/dist/css/jquery.atwho.css to
+./public/css/vendor
+
+import with @yield('header') in app.blade and @section('header') in show.blade
+    <link href="{{ asset('css/vendor/jquery.atwho.css') }}" rel="stylesheet">
+
+in vue component
+
+ //for tagging
+    import 'jquery.caret';
+    import 'at.js';
+
+mounted() {
+          $('#body').atwho({
+             at: '@',
+              delay: 750,
+              callbacks: {
+                 remoteFilter: function(query, callback) {
+//                     $.getJSON('/api/users', {name:query}, function(usernames){
+//                         callback(usernames)
+//                     })
+                 }
+              }
+          });
+        },
+
+ustvari nov route na api/users in php artisan make:controller Api/UserController
+
+99. last log in timestamp
+    - in EventServiceProvider listen for Login event, trigger Listener
+    -> Users/UpdateLastLoggedInAt
+
+9999.
+    - Pivot Many to many relacija
+    - vmesna tabela, thread belongs to many
+    - to retrieve date from pivot table, use ->withTimestamps()
+
+    - Polymorphic Relations
+    - se uporablja za npr: komentiranje: uporabnik lahko komentira na sliki ali videu, uporabi se enako tabelo comments
+    https://laravel.com/docs/5.4/eloquent-relationships#polymorphic-relations
+
+    foreach($thread->statuses as $thread){
+            echo($thread->pivot->created_at);
+
+        //on create, assign status of 1 (nepotrjeno)
+        $thread->statuses()->attach(1);
+
+    !!!
+    FILTERING: https://laracasts.com/series/eloquent-techniques/episodes/4
+    OPCIJA
+    if($request->has('dificulty') preveri če je v query URLju difficulty=beginner
+    if($request->exists('popular') preveri, če je v queryu ?popular
+    !!!
+
+    https://stackoverflow.com/questions/37621807/laravel-5-2-filtering-on-a-custom-attribute-and-then-paginating
+    THIS IS PIVOT TABLE SOLUTION, and custom attribute on model thread
+    //filter and return all threads for given status, cant get additional filters
+        if(request()->has('status')) {
+            $statusId = request('status');
+            $result = Thread::get()->filter(function($thread) use ($statusId) {
+                return $thread->currentStatus == $statusId;
+            });
+
+            return $result;
+        }
+
+    https://laracasts.com/discuss/channels/general-discussion/best-practices-for-custom-helpers-on-laravel-5?page=2
+
+
+101. IMPLEMENT ADMIN PANEL - TO CHANGE THREAD STATUSES - DONE
+
+    Administrator ima svoj middleware razred IsAdministrator
+    1. php artisan make:middleware IsAdmin
+    2. add to routeMiddleware in app/Http/Kernel.php v $routeMiddleware ->
+    'admin' => \App\Http\Middleware\IsAdmin::class,
+    3. Edit isAdmin file:
+
+
+100. Task scheduling for 15 + 14 days of voting
+    - https://laravel.com/docs/5.4/scheduling
+
+    app/Console/kernel.php
+    registriranje v commands, da se lahko kliče iz php artisan ChangeThreadStatuses
+    v schedule se doda, kdaj se kliče cronjob
+    php artisan make:command ChangeThreadStatuses
+
+    klic v konzoli z : php artisan thread:changeStatus -> določeno glede na ime ($signature v command classu)
+
+    \Command\ChangeThreadStatus se lahko kliče po imenu ^^
+
+        canVote(1 < thread_status_id < 4)
+       1 - nepotrjeno
+     * 2 - v_razpravi - 15 dni, samo ta ima opcijo spreminjanja predloga
+     * 3 - v_glasovanju - 14 dni, nima opcije spreminjanja
+     * 4 - posredovano - nima opcije glasovanja
+     * 5 - organ_sprejel - nima opcije glasovanja
+     * 6 - organ_zavrnil  nima opcije glasovanja
+     * 7 - neustrezno - nima opcije glasovanja
+
+100. ON update (editBody), delete all votes and notify all that voted
+     https://laravel.com/docs/5.4/events
+     Wildcard Event Listener preberi, NotifyThreadSubscribers!!! event je ThreadWasUpdated
+     Event Subscribers, listener ki posluša za več eventov
+
+101. Task scheduler ^^ ^^ ^^ ^^
+    calculate votes
+    votes_count attribute v tabelo, increment boot() enako kokr replies ?
+        static::created(function ($vote){
+           $vote->thread->increment('votes_count');
+        });
+
+        static::deleted(function ($vote){
+            $vote->thread->decrement('votes_count');
+        });
+
+
+104. Thread belongs to many tags
+    //threads
+    //tags -> Model Tag, laravel po defaultu išče tabelo MODEL+s (sicer v modelu določi protected $table = 'imetabele')
+    //pivot table - > tag_thread -> po abecednem zaporedju, vzame ednino modelov
+    v migrations lahko narediš hkrati tudi schema::create za pivot tabelo, ne rabi novega migration fila
+    -> PK oba thread in tag id
+    Schema::create('tag_thread', function (Blueprint $table) {
+                   $table->unsignedInteger('thread_id');
+                   $table->unsignedInteger('tag_id');
+                   $table->primary(['thread_id', 'tag_id']);
+               });
+
+    - to add an existing tag to thread, do $thread->tags()->attach($tag or $tag->id)
+    - to remove : $thread->tags()->detach($tag);
+
+    VUE UPORABA CUSTOM KNIJŽNICE PLUGIN JQUERY ZUNANJA JAVASCRIPT IMPORT
+    KORAKI ZA NAMESTITEV ZUNANJE JAVASCRIPT ALI JQUERY KNJIŽNICE V VUE ->jqcloud
+
+    v webpack.mix dodaš .js(.....
+    v glavni vue file ( app.js dodaš require('./JQCloud');
+    css kopiraš v svoj main.css ali posebej in registriraš v webpack z .css(...
+    registriarš novo komponento Vue.component('tag-cloud', require('./cloud/Tagcloud.vue'));
+    ustvariš komponento
+
+    v <script> daš kokr ponavadi
+    export default {
+      //če se sprejme data
+      props: ['data'],
+
+      mounted:  function() {
+        skripta tukaj
+         }
+
+    Prehajanje med statusi smo uredili z Task Scheduling - Cron job. Vsak dan ob 23.55 se sproži \Command\ChangeThreadStatuses razred,
+    ki preveri vse objave in ustreznim spremeni status.
+    S tem se olajša delo moderatorju.
+
+
+103. Iskanje po datumu
+    za iskanje po datumu smo uporabili https://github.com/charliekassel/vuejs-datepicker, ker bootstrap ne omogoča datepickerja out of the box
+
+104. to je to začni delat na diplomi

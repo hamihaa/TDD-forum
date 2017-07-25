@@ -2,7 +2,8 @@
 
 namespace App;
 
-use App\Notifications\ThreadWasUpdated;
+use App\Events\ThreadBodyWasUpdated;
+use App\Notifications\ThreadWasCommented;
 use Illuminate\Database\Eloquent\Model;
 
 class ThreadSubscription extends Model
@@ -35,8 +36,9 @@ class ThreadSubscription extends Model
      *
      * @param $reply
      */
-    public function notify($reply)
+    public function notifyAllSubscribers($reply)
     {
-        $this->user->notify(new ThreadWasUpdated($this->thread, $reply));
+        $this->user->notify(new ThreadWasCommented($this->thread, $reply));
     }
+
 }

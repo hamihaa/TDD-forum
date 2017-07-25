@@ -1,46 +1,53 @@
 <template>
-    <div class="panel-heading">
-        <div :id="'reply-'+id" class="level">
-            <h5 class="flex">
-                <a :href="'/profiles/'+ data.owner.name"
-                    v-text="data.owner.name">
-                    </a>,
-                <span v-text="ago"></span>
-            </h5>
-
-            <div>
-
-            </div>
-            <div v-if="signedIn">
-                <favorite :reply="data"></favorite>
-            </div>
-        </div>
-
-        <div class="panel-footer">
-            <div v-if="editing">
-                <div class="form-group">
-                    <textarea class="form-control" v-model="body"></textarea>
+    <div>
+        <div class="panel-heading">
+            <div :id="'reply-'+id" class="level">
+                <h5 class="flex">
+                    <div v-if="data.owner.is_anonymous == 0">
+                        <a  :href="'/profiles/'+ data.owner.name"
+                            v-text="data.owner.name">
+                        </a>,
+                    </div>
+                    <div v-else>
+                            anonimni uporabnik,
+                    </div>
+                    <span v-text="ago"></span>
+                </h5>
+                <div>
                 </div>
-                <button class="btn btn-xs btn-success" @click="update">Potrdi</button>
-                <button class="btn btn-xs btn-default" @click="editing = false">Prekliči</button>
+                <div v-if="signedIn">
+                    <favorite :reply="data"></favorite>
+                </div>
             </div>
-            <div v-else v-text="body"></div>
+            </div>
+            <div class="panel-body">
+                <div v-if="editing">
+                    <form @submit="update">
+                        <div class="form-group">
+                            <textarea class="form-control" v-model="body" required></textarea>
+                        </div>
+                        <button class="btn btn-xs btn-success">Potrdi</button>
+                        <button class="btn btn-xs btn-default" @click="editing = false" type="button">Prekliči</button>
+                    </form>
+                </div>
+                <div v-else v-html="body"></div>
+            </div>
+
+
+            <!-- @can('delete', $reply) -->
+            <div class="panel-content level">
+                <button class="btn btn-link btn-sm" v-if="canUpdate" @click="editing = true">
+                    Uredi
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </button>
+            </div>
+                <button class="btn btn-link btn-sm mr-1" v-if="canDelete|canUpdate" @click="destroy">
+                    Odstrani komentar
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+
+            <!--  @endcan> -->
         </div>
-
-
-        <!-- @can('delete', $reply) -->
-        <div class="panel-content level">
-            <button class="btn btn-link btn-sm" v-if="canUpdate" @click="editing = true">
-                Uredi
-                <span class="glyphicon glyphicon-pencil"></span>
-            </button>
-        </div>
-            <button class="btn btn-link btn-sm mr-1" v-if="canDelete|canUpdate" @click="destroy">
-                Odstrani komentar
-                <span class="glyphicon glyphicon-trash"></span>
-            </button>
-
-        <!--  @endcan> -->
     </div>
 </template>
 
@@ -58,7 +65,6 @@
                 editing: false,
                 id: this.data.id,
                 body: this.data.body,
-
             };
         },
         computed: {
@@ -72,7 +78,7 @@
             },
 
             canUpdate() {
-                return this.authorize(user => this.data.user_id == user.id)
+                return this.authorize(user => (this.data.user_id == user.id))
             },
 
             canDelete() {

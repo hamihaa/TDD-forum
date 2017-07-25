@@ -38,7 +38,13 @@
                                 </textarea>
                                 {!! $errors->first('body', '<span class="Error">:message</span>') !!}
                             </div>
-
+                            <!-- Tags Form Input  -->
+                            <div class="form-group {{ $errors->has('tags') ? 'has-error' : '' }}">
+                                <label for="tags">Ključne besede, ločene z vejico:</label>
+                                <input type="text" class="form-control" name="tags" id="tags"
+                                       required value="{{ old('tags') }}">
+                                {!! $errors->first('tags', '<span class="Error">:message</span>') !!}
+                            </div>
                             <!-- Button Form Input  -->
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary" required>Objavi</button>
