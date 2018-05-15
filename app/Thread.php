@@ -1,5 +1,4 @@
 <?php
-
 namespace App;
 
 use App\Events\ThreadHasNewReply;
@@ -19,25 +18,27 @@ class Thread extends Model
     protected $with = ['creator', 'category', 'status']; // + 'favorites'
 
     //appended to object
-    protected $appends = ['isSubscribedTo',
+    protected $appends = [
+        'isSubscribedTo',
         'isDownVotedOn',
         'isUpVotedOn',
         'upvotesCount',
-        'downvotesCount'];
+        'downvotesCount'
+    ];
 
     protected static function boot()
     {
         parent::boot();
 
         static::deleting(function ($thread) {
-           $thread->tags()->detach();
+            $thread->tags()->detach();
         });
         /*replies_count is always available when calling $thread object
         /* replaced by updating migration for threads table, added replies_count
         static::addGlobalScope('replyCount', function($builder){
             $builder->withCount('replies');
         });
-        */
+         */
     }
 
 
@@ -48,9 +49,16 @@ class Thread extends Model
      */
     public function path()
     {
-         return "/threads/{$this->category->slug}/{$this->id}";
+        return "/threads/{$this->category->slug}/{$this->id}";
     }
 
+    public function thumbnail()
+    {
+        if ($this->image) {
+            return $this->image;
+        }
+        return "categories/" . $this->category->name . ".jpg";
+    }
     /**
      * Get the user who created this thread.
      *
@@ -70,14 +78,14 @@ class Thread extends Model
     }
 
     /*
-     * Change status of thread
+     * Changes status of thread
      */
     public function changeStatus($threadStatusId)
     {
         $this->thread_status_id = $threadStatusId;
 
         //if changing to v_razpravi
-        if($threadStatusId == 2) {
+        if ($threadStatusId == 2) {
             $this->in_discussion_from = \Carbon\Carbon::now();
         }
         //if changing to v_glasovanju
@@ -98,7 +106,7 @@ class Thread extends Model
     {
         return $this->statuses()->orderBy('pivot_created_at', 'desc')->first()->id;
     }
-    */
+     */
 
     /**
      * A thread can have many replies.
@@ -125,7 +133,8 @@ class Thread extends Model
      *  any tag may be applied to many tags
      *
      */
-    public function tags() {
+    public function tags()
+    {
         return $this->belongsToMany('App\Tag');
     }
 
@@ -161,7 +170,7 @@ class Thread extends Model
     public function subscribe($userId = null)
     {
         $this->subscriptions()->create([
-           'user_id' => $userId? : auth()->id()
+            'user_id' => $userId ? : auth()->id()
         ]);
 
         return $this;
@@ -171,7 +180,7 @@ class Thread extends Model
     public function unsubscribe($userId = null)
     {
         $this->subscriptions()
-            ->where(['user_id' => $userId? : auth()->id()])
+            ->where(['user_id' => $userId ? : auth()->id()])
             ->delete();
     }
 
@@ -198,8 +207,8 @@ class Thread extends Model
     public function getIsUpVotedOnAttribute()
     {
         return $this->votes()->where('user_id', auth()->id())
-           ->where('vote_type', '1')
-           ->exists();
+            ->where('vote_type', '1')
+            ->exists();
     }
 
     /**
@@ -231,7 +240,7 @@ class Thread extends Model
     public function vote($userId = null)
     {
         $this->votes()->create([
-            'user_id' => $userId? : auth()->id(),
+            'user_id' => $userId ? : auth()->id(),
             'vote_type' => request('vote_type')
         ]);
 
@@ -241,7 +250,7 @@ class Thread extends Model
     public function unvote($userId = null)
     {
         $this->votes()
-            ->where(['user_id' => $userId? : auth()->id()])
+            ->where(['user_id' => $userId ? : auth()->id()])
             ->delete();
         return $this;
     }
@@ -249,7 +258,7 @@ class Thread extends Model
     public function changeVote($userId = null)
     {
         $this->votes()
-            ->where(['user_id' => $userId? : auth()->id()])
+            ->where(['user_id' => $userId ? : auth()->id()])
             ->update(['vote_type' => request('vote_type')]);
         return $this;
     }
@@ -274,7 +283,7 @@ class Thread extends Model
     public function neededVotesToPass()
     {
         $total = \App\User::numberOfActiveUsers();
-        $needed = Round($total*0.05) - $this->upvotesCount - $this->downvotesCount;
+        $needed = Round($total * 0.05) - $this->upvotesCount - $this->downvotesCount;
         return $needed;
     }
 }

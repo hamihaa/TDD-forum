@@ -6,7 +6,19 @@ use Illuminate\Http\Request;
 
 class ThreadFilters extends Filters
 {
-    protected $filters = ['by', 'popular', 'unanswered', 'votes', 'status', 'tag', 'search', 'dateFrom'];
+    protected $filters = ['by', 'popular', 'unanswered', 'votes', 'status', 'tag', 'search', 'dateFrom', 'search'];
+
+    public function search($query)
+    {
+        return $this->builder->where('title', 'LIKE', "%$query%" )
+            ->orwhereHas('creator', function($user) use($query) {
+                $user->where('name','LIKE', "%$query%" );
+            })
+            ->orWhereHas('tags', function($tag) use ($query) {
+                $tag->where('name','LIKE', "%$query%" );
+            })
+            ->latest()->with('votes')->paginate(10);
+    }
 
     /**
      * filter query by given username
@@ -21,7 +33,7 @@ class ThreadFilters extends Filters
     }
 
     /**
-     * Filter query by given tag (Oznaka)
+     * Filter query by given tag
      * @param $tagName
      */
     public function tag($tagName)

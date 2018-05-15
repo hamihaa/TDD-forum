@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddDatesToThreadTable extends Migration
+class ThreadAddImage extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,7 @@ class AddDatesToThreadTable extends Migration
     public function up()
     {
         Schema::table('threads', function (Blueprint $table) {
-            $table->timestamp('in_discussion_from')->nullable();
-            $table->timestamp('in_voting_from')->nullable();
+            $table->string('image')->nullable();
         });
     }
 
@@ -27,7 +26,6 @@ class AddDatesToThreadTable extends Migration
     public function down()
     {
         Schema::table('threads', function (Blueprint $table) {
-            $table->dropColumn(['in_discussion_from', 'in_voting_from']);
         });
     }
 }

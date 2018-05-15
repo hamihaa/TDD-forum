@@ -21,13 +21,13 @@ export default Doughnut.extend({
                     data: [this.pro, this.against ],
                 }
             ],
-                options: {
-                    display: true,
-                    position: 'bottom',
-                    text: 'Custom Chart Title',
-                    rotation: 1 * Math.PI,
-                    circumference: 1 * Math.PI
-                },
+            options: {
+                display: true,
+                position: 'bottom',
+                text: 'Custom Chart Title',
+                rotation: 1 * Math.PI,
+                circumference: 1 * Math.PI
+            },
         },
 
         )

@@ -4,10 +4,12 @@ namespace App;
 
 use App\Events\ThreadBodyWasUpdated;
 use App\Notifications\ThreadWasCommented;
+use App\Traits\RecordsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class ThreadSubscription extends Model
 {
+
     protected $guarded = [];
 
     /**

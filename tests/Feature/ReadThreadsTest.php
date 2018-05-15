@@ -23,7 +23,7 @@ class ReadThreadsTest extends TestCase
     {
         $response = $this->get('/threads');
         //$response->assertStatus(200);
-        $response->assertSee($this->thread->body, 20);
+        $response->assertSee($this->thread->title, 1);
     }
 
     /** @test */
@@ -78,7 +78,7 @@ class ReadThreadsTest extends TestCase
         $response = $this->getJson('/threads?popular=1')->json();
 
         //should return from most to least popular
-        $this->assertEquals([3, 2, 0], array_column($response, 'replies_count'));
+        $this->assertEquals([3, 2, 0], array_column($response['data'], 'replies_count'));
     }
 
     /** Testing that one thread is shown and other - with replies, not
@@ -92,7 +92,7 @@ class ReadThreadsTest extends TestCase
 
         $response = $this->getJson('/threads?unanswered=1')->json();
 
-        $this->assertCount(1, $response);
+        $this->assertCount(1, $response['data']);
     }
 
 

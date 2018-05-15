@@ -143,8 +143,8 @@
                     <li><a href="/threads?status=2">V razpravi</a></li>
                     <li><a href="/threads?status=3">V glasovanju</a></li>
                     <li><a href="/threads?status=4">Posredovani</a></li>
-                    <li><a href="/threads?status=5">Sprejeti predlogi</a></li>
-                    <li><a href="/threads?status=6">Zavrnjeni predlogi</a></li>
+                    <li><a href="/threads?status=5">Sprejeti</a></li>
+                    <li><a href="/threads?status=6">Zavrnjeni</a></li>
                     <li><a href="/threads?status=7">Neustrezni</a></li>
                     <li><a id="last-item" href="/threads">Vsi</a></li>
                 </ul>

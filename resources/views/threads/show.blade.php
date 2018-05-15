@@ -15,6 +15,7 @@
                         <div class="panel-heading">
                             <div class="level">
                                 <span class="flex">
+                                    <img src="/storage/{{ $thread->creator->avatar() }}" class="img-circle" width="75px" height="75px">
                                     <a href="/profiles/{{ $thread->creator->name }}">
                                         {{ $thread->creator->name }}
                                     </a>
@@ -152,7 +153,7 @@
                             </div>
                                 <p><strong style="padding-top:8px; font-size:16px;color:#d58512">STATUS: {{ $thread->status->status_name }} </strong></p>
                             <p>
-                                Objavil <a href="/profiles/{{ $thread->creator->name }}"> {{ $thread->creator->name }} </a> <span v-text="postedAt"></span>
+                                Objavljeno <span v-text="postedAt"></span>
                                 <p>
                                 število komentarjev: <span v-text="repliesCount"></span>
                                 <br>

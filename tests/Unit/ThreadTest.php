@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Notifications\ThreadWasCommented;
 use App\Notifications\ThreadWasUpdated;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -93,7 +94,7 @@ class ThreadTest extends TestCase
             'user_id' => 999
         ]);
 
-        Notification::assertSentTo(auth()->user(), ThreadWasUpdated::class);
+        Notification::assertSentTo(auth()->user(), ThreadWasCommented::class);
     }
 
     /*

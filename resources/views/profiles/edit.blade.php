@@ -7,20 +7,33 @@
             <!-- left column -->
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="text-center">
-                    <img src="" class="avatar img-circle img-thumbnail" alt="avatar">
-                    <h6>Upload a different photo...</h6>
+                    <img src="/storage/{{ $user->avatar() }}" class="img-circle" width="200px" height="200px">
                 </div>
             </div>
             <!-- edit form column -->
             <div class="col-md-8 col-sm-6 col-xs-12 personal-info">
                 <h3>Osebni podatki</h3>
-                <form method="POST" action="/profiles/{{ $user->name }}" class="form-horizontal" role="form" enctype="multipart/form-data">
-                    {{method_field('PATCH')}}
+                <form action="{{ route('avatar', $user) }}" method="POST" enctype="multipart/form-data">
                     {{csrf_field()}}
-                    <label class="col-lg-3 control-label" for="thumbnail">Profilna slika:</label>
-                    <input type="file" name="thumbnail" class="text-center form-control center-block well well-sm">
+                    {{ method_field('PATCH') }}
+                    <label class="col-lg-3 control-label" for="avatar">Profilna slika:</label>
+                    <input type="file" name="avatar" class="text-center form-control center-block well well-sm">
 
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"></label>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary" required>Potrdi profilno sliko</button>
+                                <input class="btn btn-default" value="Prekliči" type="reset">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <form method="POST" action="/profiles/{{ $user->name }}" class="form-horizontal" role="form">
                     <!-- Name Form Input  -->
+                    {{csrf_field()}}
+                    {{ method_field('PATCH') }}
                     <div class="form-group {{ $errors->has('name') ? 'has-error' : '' }}">
                         <label class="col-lg-3 control-label" for="name">Uporabniško ime:</label>
                         <div class="col-lg-8">

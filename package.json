@@ -24,5 +24,23 @@
     "jquery.caret": "^0.3.1",
     "moment": "^2.18.1",
     "vuejs-datepicker": "^0.7.16"
-  }
+  },
+  "name": "laravel-forum",
+  "description": "Laravel 5.4 forum based on test driven development\r - Vue.js 2.0 front end.\r - Tested with Unit tests.",
+  "version": "1.0.0",
+  "main": "webpack.mix.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamihaa/TDD-forum.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hamihaa/TDD-forum/issues"
+  },
+  "homepage": "https://github.com/hamihaa/TDD-forum#readme"
 }

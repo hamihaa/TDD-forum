@@ -38,7 +38,7 @@ class CreateThread extends FormRequest
             'user_id' => auth()->id(),
             'category_id' => request('category_id'),
             'title' => request('title'),
-            'body' => request('body')
+            'body' => request('body'),
         ]);
 
 
@@ -46,11 +46,14 @@ class CreateThread extends FormRequest
 
         $thread->tags()->attach($listOfTags);
 
+        //add img
+        $thumbnail = request('image');
+        if(isset($thumbnail)){
+            $thread->update([
+                'image' => request()->file('image')->store('uploads', 'public')
+            ]);
+        }
+
         return $thread;
-    }
-
-    public function persistUpdate()
-    {
-
     }
 }

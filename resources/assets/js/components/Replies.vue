@@ -26,7 +26,6 @@
         mixins: [collection],
 
         data() {
-            //initializing data
             //set of items is in begining empty, when view is created, fetch fills it
             return {
                 dataSet: false

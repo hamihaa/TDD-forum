@@ -593,6 +593,16 @@ mounted() {
 
 ustvari nov route na api/users in php artisan make:controller Api/UserController
 
+64. Images are stored in storage/app/public/avatars
+    - to make a link so app can access them from public/storage, do ->
+    -> php artisan storage:link
+    user has method for image path
+
+66. Trending Threads With Redis
+    composer require predis/predis
+
+
+
 99. last log in timestamp
     - in EventServiceProvider listen for Login event, trigger Listener
     -> Users/UpdateLastLoggedInAt

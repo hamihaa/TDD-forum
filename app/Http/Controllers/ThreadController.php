@@ -8,10 +8,6 @@ use App\Http\Requests\CreateThread;
 use App\Tag;
 use App\Thread;
 use App\Filters\ThreadFilters;
-use App\ThreadStatus;
-use App\User;
-use Carbon\Carbon;
-use function GuzzleHttp\json_encode;
 use Illuminate\Http\Request;
 
 class ThreadController extends Controller
@@ -28,7 +24,6 @@ class ThreadController extends Controller
      * @param Category $category
      * @param ThreadFilters $filters
      * @return \Illuminate\Http\Response
-     * @internal param null $categoryId
      */
     public function index(Category $category, ThreadFilters $filters)
     {
@@ -121,11 +116,12 @@ class ThreadController extends Controller
     {
         $this->authorize('update', $thread);
 
-        //if only thread_status_id is being updated
+        //if only thread_status_id is being updated (by admin)
         if($request['thread_status_id']){
             $thread->changeStatus($request['thread_status_id']);
         } else {
             $this->authorize('editBody', $thread);
+
             $this->validate($request, [
                 'category_id' => 'required|exists:categories,id',
                 'title' => 'required',
@@ -133,8 +129,8 @@ class ThreadController extends Controller
                 'tags' => 'required'
             ]);
 
-            //adding tags (sync removes the ones taht arent in array)
-            $thread->tags()->sync(\App\Tag::createTags(request('tags')));
+            //adding tags (sync removes the ones that aren't in array)
+            $thread->tags()->sync(Tag::createTags(request('tags')));
 
             $thread->update([
                 'category_id' => $request['category_id'],
@@ -144,24 +140,26 @@ class ThreadController extends Controller
             //notify subscribers and all that voted
             event(new ThreadBodyWasUpdated($thread));
 
-            //pobriše vse glasove on update
+            //if thread is updated, all votes must be deleted
             $thread->votes->each->delete();
 
         }
-        return back();
+        return redirect($thread->path())->with('flash', 'Post has been updated.');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Thread  $thread
+     * @param Category $category
+     * @param  \App\Thread $thread
      * @return \Illuminate\Http\Response
      */
-    public function destroy($category, Thread $thread)
+    public function destroy(Category $category, Thread $thread)
     {
         //ThreadPolicy, in case of error, returns 403
         $this->authorize('delete', $thread);
 
+        //if one transaction fails, rollback all
         \DB::transaction(function() use ($thread) {
             $thread->replies->each->delete();
             $thread->votes->each->delete();
@@ -172,44 +170,26 @@ class ThreadController extends Controller
             return response([], 204);
         }
 
-        return redirect('/threads');
+        return redirect('/threads')->with('flash', 'Predlog je bil izbrisan.');
+;
     }
 
     /**
+     * Filtering threads by search input (creator's name, tag's name, title),
+     * or other filters -> ['by', 'popular', 'unanswered', 'votes', 'status', 'tag', 'search', 'dateFrom', 'search'];
+     *
      * @param Category $category
      * @param ThreadFilters $filters
      * @return mixed
      */
     public function getThreads(Category $category, ThreadFilters $filters)
     {
-
-        //search išče LIKE po creator name, tags name, title.
-        $query = request('search');
-        if($query){
-            return static::search($query);
-        }
-
-        //calls scopeFilter from model and app/Filters/ThreadFilters
         $threads = Thread::latest()->with('votes')->filter($filters);
 
         if ($category->exists) {
             $threads->where('category_id', $category->id);
         }
 
-        //use paginate(10) instead get if needed, and uncomment links() in view
         return $threads->paginate(10);
-    }
-
-    public static function search($query)
-    {
-        return Thread::where('title', 'LIKE', '%'. $query . '%' )
-            ->orwhereHas('creator', function($user) use($query) {
-                $user->where('name','LIKE', '%'. $query . '%' );
-            })
-            ->orWhereHas('tags', function($tag) use ($query) {
-                $tag->where('name','LIKE', '%'. $query . '%' );
-            })
-            ->latest()->with('votes')->paginate(10);
-
     }
 }

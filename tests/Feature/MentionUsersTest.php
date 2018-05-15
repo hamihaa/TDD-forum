@@ -13,7 +13,7 @@ class MentionUsersTest extends TestCase
     /**
      * A basic test example.
      *
-     * @return void
+     * @test
      */
     public function users_mentioned_in_a_reply_are_notified()
     {

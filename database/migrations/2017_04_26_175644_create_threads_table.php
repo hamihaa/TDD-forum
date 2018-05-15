@@ -19,6 +19,8 @@ class CreateThreadsTable extends Migration
             $table->unsignedInteger('category_id');
             $table->unsignedInteger('replies_count')->default(0);
             $table->unsignedInteger('thread_status_id')->default(1);
+            $table->timestamp('in_discussion_from')->nullable();
+            $table->timestamp('in_voting_from')->nullable();
             $table->string('title');
             $table->text('body');
             $table->timestamps();

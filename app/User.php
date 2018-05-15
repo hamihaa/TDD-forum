@@ -4,11 +4,12 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, CanResetPassword;
 
 
     /**
@@ -17,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'last_login'
+        'name', 'email', 'password', 'last_login', 'thumbnail', 'first_name', 'last_name'
     ];
 
     /**
@@ -55,6 +56,11 @@ class User extends Authenticatable
     public function activity()
     {
         return $this->hasMany(Activity::class);
+    }
+
+    public function avatar()
+    {
+        return $this->thumbnail ?: 'avatars/default.png';
     }
 
     /*

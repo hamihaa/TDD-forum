@@ -8,6 +8,7 @@
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#menu1">Predlogi</a></li>
                     <li><a data-toggle="tab" href="#menu2">Uporabniki</a></li>
+                    <li><a data-toggle="tab" href="#menu3">Novice</a></li>
                 </ul>
                 <div class="tab-content">
                     <div id="menu1" class="tab-pane fade in active">
@@ -62,7 +63,7 @@
                     </div>
 
                     <!-- Users -->
-                    <div id="menu2" class="tab-pane fade in active">
+                    <div id="menu2" class="tab-pane fade in">
                         <h2>Nadzorna plošča- Vsi uporabniki</h2>
                         <div class="table-responsive full">
                             <table class="table table-striped table-hover">
@@ -92,9 +93,50 @@
                             </table>
                         </div>
                     </div>
+                <!-- /users -->
+
+                <!-- News-->
+                <div id="menu3" class="tab-pane fade in">
+                    <h2>Nadzorna plošča- Novice</h2>
+                    <a href="news/create" class="btn btn-success">Dodaj novico</a>
+                    <div class="table-responsive full">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>ID</th>
+                                <th>Naslov</th>
+                                <th>Vsebina</th>
+                                <th>Dodano na</th>
+                            </tr>
+                            <tr></tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($news as $thread)
+                                <tr>
+                                    <td> <a href="{{ $thread->path() }}/edit"><i class="fa fa-pencil"></i></a> </td>
+                                    <td> {{ $thread->id }} </td>
+                                    <td><a href="{{$thread->path() }}"> {{ $thread->title }} </a></td>
+                                    <td> {{ $thread->body }} </td>
+                                    <td> {{ $thread->created_at }} </td>
+                                    <td>
+                                        <form method="POST" action="{{ $thread->path() }}">
+                                            {{csrf_field()}}
+                                            {{ method_field('DELETE') }}
+                                            <button class="btn btn-link">
+                                                Izbriši<i class="fa fa-eraser"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach;
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <!-- /pasta -->
+                <!-- /news -->
             </div>
+                </div>
         </div>
     </div>
 @endsection

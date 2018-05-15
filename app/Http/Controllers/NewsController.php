@@ -1,14 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\News;
-use App\Thread;
-use App\User;
 use Illuminate\Http\Request;
 
-class AdminController extends Controller
+class NewsController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('admin');
@@ -21,10 +19,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $threads = Thread::where('thread_status_id', 1)->orderBy('created_at', 'asc')->get();
-        $users = User::all();
-        $news = News::all();
-        return view('admin.index', compact('threads', 'users', 'news'));
+        //
     }
 
     /**
@@ -34,7 +29,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        return view('news.create');
     }
 
     /**
@@ -45,18 +40,32 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required',
+            'body' => 'required',
+        ]);
+
+        $news = News::create(request()->all());
+
+        $thumbnail = request('image');
+        if(isset($thumbnail)){
+            $news->update([
+                'thumbnail' => request()->file('image')->store('uploads', 'public')
+            ]);
+        }
+        return redirect($news->path());
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param News $news
      * @return \Illuminate\Http\Response
+     * @internal param int $id
      */
-    public function show($id)
+    public function show(News $news)
     {
-        //
+        return view('news.show', compact('news'));
     }
 
     /**
@@ -90,6 +99,7 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        //
+        News::destroy($id);
+        return redirect()->back();
     }
 }

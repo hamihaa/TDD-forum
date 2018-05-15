@@ -43111,7 +43111,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     mixins: [__WEBPACK_IMPORTED_MODULE_2__mixins_Collection__["a" /* default */]],
 
     data: function data() {
-        //initializing data
         //set of items is in begining empty, when view is created, fetch fills it
         return {
             dataSet: false

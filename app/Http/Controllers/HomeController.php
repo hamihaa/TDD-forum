@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,6 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+
         $threadCount= \App\Thread::where('created_at', '>=', \Carbon\Carbon::now()->subMonth())->count();
 
         $acceptedThreadCount= \App\Thread::where('updated_at', '>=', \Carbon\Carbon::now()->subMonth())
@@ -34,10 +36,13 @@ class HomeController extends Controller
           FROM threads LEFT JOIN categories  ON threads.category_id=categories.id
           WHERE threads.created_at > NOW() - INTERVAL 1 MONTH 
           GROUP BY threads.category_id
-           ORDER BY threads_count desc
-           LIMIT 1');
+           ORDER BY threads_count desc LIMIT 1');
 
-        $popularCategory = $popularCategory[0]->name;
+        if(count($popularCategory)){
+            $popularCategory =  $popularCategory[0]->name;
+        } else {
+            $popularCategory = 'none';
+        }
 
         $voteCount = \App\ThreadVote::where('created_at', '>=', \Carbon\Carbon::now()->subMonth())->count();
 
@@ -45,6 +50,8 @@ class HomeController extends Controller
 
         $newUserCount = \App\User::where('created_at', '>=', \Carbon\Carbon::now()->subMonth())->count();
 
-        return view('home', compact('threadCount', 'acceptedThreadCount', 'popularCategory', 'voteCount', 'replyCount', 'newUserCount'));
+        $newslist = \App\News::all();
+
+        return view('home', compact('threadCount', 'acceptedThreadCount', 'popularCategory', 'voteCount', 'replyCount', 'newUserCount', 'newslist'));
     }
 }

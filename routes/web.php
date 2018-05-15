@@ -12,8 +12,6 @@
 */
 
 Auth::routes();
-Route::get('login/github', 'Auth\LoginController@redirectToProvider');
-Route::get('login/github/callback', 'Auth\LoginController@handleProviderCallback');
 
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');
@@ -57,3 +55,10 @@ Route::delete('profiles/{user}/notifications/{notification}', 'UserNotificationC
 Route::get('/admin', 'AdminController@index');
 
 Route::get('/api/user', 'Api\UserController@index');
+Route::patch('/api/user/{user}/avatar', 'Api\UserAvatarController@store')->name('avatar');
+
+Route::resource('news', 'NewsController');
+//Route::get('news/create', 'NewsController@create');
+//Route::get('news/{news}', 'NewsController@show');
+//Route::post('news', 'NewsController@store');
+//Route::delete('')

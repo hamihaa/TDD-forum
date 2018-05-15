@@ -24,8 +24,7 @@ class Tag extends Model
         $items = explode(',', $arrayOfTags);
         $listOfTags = array();
 
-        foreach($items as $item)
-        {
+        foreach ($items as $item) {
             $tag = (\App\Tag::firstOrCreate(['name' => strtolower(trim($item))]));
             $listOfTags[] = $tag->id;
         }
@@ -34,7 +33,7 @@ class Tag extends Model
     }
 
     /**
-     * Returns popular tags, limit to 10
+     * Returns popular tags, limit to 15
      * @return mixed
      */
     public static function getPopularTags()
@@ -54,12 +53,11 @@ class Tag extends Model
     public static function toCloudArray($tags)
     {
         $cloud = array();
-        foreach ($tags as $key=>$tag)
-        {
+        foreach ($tags as $key => $tag) {
             $cloud[] = [
                 'text' => $tag->name,
                 'weight' => $key / 0.5,
-                'link' => '/threads?tag='.$tag->name
+                'link' => '/threads?tag=' . $tag->name
             ];
         }
         return json_encode($cloud);

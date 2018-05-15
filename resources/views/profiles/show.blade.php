@@ -6,6 +6,8 @@
             <div class="col-md8 col-md-offset-2">
             <div class="page-header">
                 <h1>
+                    <img src="/storage/{{ $profileUser->avatar() }}" class="img-circle" width="200px" height="200px">
+
                     {{ $profileUser->name }}
                     <small>član od {{ $profileUser->created_at->format('m.Y ') }}</small>
                 </h1>
