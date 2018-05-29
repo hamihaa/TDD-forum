@@ -42733,30 +42733,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    //get from view
-    props: ['data'],
+  //get from view
+  props: ["data"],
 
-    //when page loads
-    mounted: function mounted() {
+  //when page loads
+  mounted: function mounted() {
+    var jQCloud = __webpack_require__(13);
 
-        var jQCloud = __webpack_require__(13);
+    var words = JSON.parse(this.data);
 
-        var words = JSON.parse(this.data);
+    $("#demo").jQCloud(words, {
+      //            shape: "rectangular",
+      delay: 0,
+      autoResize: true
+    });
 
-        $("#demo").jQCloud(words, {
-            //            shape: "rectangular",
-            delay: 0,
-            autoResize: true
-        });
-
-        setTimeout(function () {
-            var obj = $("#demo").data("jqcloud");
-            var data = obj.word_array;
-            for (var i in data) {
-                $("#" + data[i]["attr"]["id"]).css("color", data[i]["color"]);
-            }
-        }, 100);
-    }
+    setTimeout(function () {
+      var obj = $("#demo").data("jqcloud");
+      var data = obj.word_array;
+      for (var i in data) {
+        $("#" + data[i]["attr"]["id"]).css("color", data[i]["color"]);
+      }
+    }, 100);
+  }
 });
 
 /***/ }),
@@ -43157,8 +43156,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Favorite_vue__ = __webpack_require__(499);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Favorite_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Favorite_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment_timezone__ = __webpack_require__(121);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment_timezone___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_moment_timezone__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CommentVote_vue__ = __webpack_require__(540);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CommentVote_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__CommentVote_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_moment_timezone__ = __webpack_require__(121);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_moment_timezone___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_moment_timezone__);
 //
 //
 //
@@ -43212,65 +43213,67 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['data'],
+  props: ["data"],
 
-    components: { Favorite: __WEBPACK_IMPORTED_MODULE_0__Favorite_vue___default.a },
+  components: { Favorite: __WEBPACK_IMPORTED_MODULE_0__Favorite_vue___default.a, CommentVote: __WEBPACK_IMPORTED_MODULE_1__CommentVote_vue___default.a },
 
-    data: function data() {
-        return {
-            editing: false,
-            id: this.data.id,
-            body: this.data.body
-        };
+  data: function data() {
+    return {
+      editing: false,
+      id: this.data.id,
+      body: this.data.body
+    };
+  },
+
+  computed: {
+    ago: function ago() {
+      __WEBPACK_IMPORTED_MODULE_2_moment_timezone___default.a.locale("sl");
+      return __WEBPACK_IMPORTED_MODULE_2_moment_timezone___default()(this.data.created_at).fromNow();
     },
-
-    computed: {
-        ago: function ago() {
-            __WEBPACK_IMPORTED_MODULE_1_moment_timezone___default.a.locale('sl');
-            return __WEBPACK_IMPORTED_MODULE_1_moment_timezone___default()(this.data.created_at).fromNow();
-        },
-        signedIn: function signedIn() {
-            return window.Laravel.signedIn;
-        },
-        canUpdate: function canUpdate() {
-            var _this = this;
-
-            return this.authorize(function (user) {
-                return _this.data.user_id == user.id;
-            });
-        },
-        canDelete: function canDelete() {
-            var _this2 = this;
-
-            return this.authorize(function (user) {
-                return _this2.data.thread.creator.id == user.id;
-            });
-        }
+    signedIn: function signedIn() {
+      return window.Laravel.signedIn;
     },
+    canUpdate: function canUpdate() {
+      var _this = this;
 
-    methods: {
-        update: function update() {
-            axios.patch('/replies/' + this.data.id, {
-                body: this.body
-            });
-            this.editing = false;
+      return this.authorize(function (user) {
+        return _this.data.user_id == user.id;
+      });
+    },
+    canDelete: function canDelete() {
+      var _this2 = this;
 
-            flash('Komentar je bil posodobljen.');
-        },
-        destroy: function destroy() {
-            axios.delete('/replies/' + this.data.id);
-            //child makes an event for parent to react in Replies.vue
-
-            this.$emit('deleted', this.data.id);
-            /*$(this.$el).fadeOut(300, () => {
-            flash('deleted')}); */
-        }
+      return this.authorize(function (user) {
+        return _this2.data.thread.creator.id == user.id;
+      });
     }
+  },
+
+  methods: {
+    update: function update() {
+      axios.patch("/replies/" + this.data.id, {
+        body: this.body
+      });
+      this.editing = false;
+
+      flash("Komentar je bil posodobljen.");
+    },
+    destroy: function destroy() {
+      axios.delete("/replies/" + this.data.id);
+      //child makes an event for parent to react in Replies.vue
+
+      this.$emit("deleted", this.data.id);
+      /*$(this.$el).fadeOut(300, () => {
+                flash('deleted')}); */
+    }
+  }
 });
 
 /***/ }),
@@ -85285,7 +85288,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     domProps: {
       "textContent": _vm._s(_vm.ago)
     }
-  })]), _vm._v(" "), _c('div'), _vm._v(" "), (_vm.signedIn) ? _c('div', [_c('favorite', {
+  })]), _vm._v(" "), _c('div'), _vm._v(" "), (_vm.signedIn) ? _c('div', [_c('comment-vote', {
     attrs: {
       "reply": _vm.data
     }
@@ -85896,6 +85899,197 @@ module.exports=function(e){function t(n){if(r[n])return r[n].exports;var i=r[n]=
 __webpack_require__(237);
 module.exports = __webpack_require__(238);
 
+
+/***/ }),
+/* 527 */,
+/* 528 */,
+/* 529 */,
+/* 530 */,
+/* 531 */,
+/* 532 */,
+/* 533 */,
+/* 534 */,
+/* 535 */,
+/* 536 */,
+/* 537 */,
+/* 538 */,
+/* 539 */,
+/* 540 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(541),
+  /* template */
+  __webpack_require__(542),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\xampp\\htdocs\\laravel-forum\\resources\\assets\\js\\components\\CommentVote.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] CommentVote.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-23903fc4", Component.options)
+  } else {
+    hotAPI.reload("data-v-23903fc4", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 541 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ["reply"],
+
+  data: function data() {
+    return {
+      favoritesCount: this.reply.favoritesCount,
+      upvotesCount: this.reply.upvotesCount,
+      downvotesCount: this.reply.downvotesCount,
+      isFavorited: this.reply.isFavorited,
+      isUpvoted: this.reply.isUpvoted,
+      isDownvoted: this.reply.isDownvoted
+    };
+  },
+
+
+  computed: {
+    classesUp: function classesUp() {
+      return ["btn", this.isUpvoted ? "btn-success" : "btn-default"];
+    },
+    classesDown: function classesDown() {
+      return ["btn", this.isDownvoted ? "btn-danger" : "btn-default"];
+    }
+  },
+
+  methods: {
+    toggleUpvote: function toggleUpvote() {
+      if (this.isUpvoted) {
+        this.destroyVote("up");
+      } else {
+        this.createUpvote();
+      }
+    },
+    toggleDownvote: function toggleDownvote() {
+      if (this.isDownvoted) {
+        this.destroyVote("down");
+      } else {
+        this.createDownvote();
+      }
+    },
+    createUpvote: function createUpvote() {
+      if (!this.isDownvoted) {
+        axios.post("/replies/" + this.reply.id + "/vote/1");
+      } else {
+        axios.patch("/replies/" + this.reply.id + "/vote/1");
+        this.downvotesCount--;
+      }
+
+      flash("Glas na komentar je bil oddan.");
+      this.isDownvoted = false;
+      this.isUpvoted = true;
+      this.upvotesCount++;
+    },
+    createDownvote: function createDownvote() {
+      if (!this.isUpvoted) {
+        axios.post("/replies/" + this.reply.id + "/vote/0");
+      } else {
+        axios.patch("/replies/" + this.reply.id + "/vote/0");
+        this.upvotesCount--;
+      }
+      flash("Glas na komentar je bil oddan.");
+      this.isUpvoted = false;
+      this.isDownvoted = true;
+      this.downvotesCount++;
+    },
+    destroyVote: function destroyVote(type) {
+      axios.delete("/replies/" + this.reply.id + "/vote");
+
+      flash("Glas je bil odstranjen.");
+      this.isDownvoted = false;
+      if (type == "up") {
+        this.upvotesCount--;
+      } else {
+        this.downvotesCount--;
+      }
+      this.isUpvoted = false;
+      this.isDownvoted = false;
+    }
+  }
+});
+
+/***/ }),
+/* 542 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('button', {
+    class: _vm.classesUp,
+    attrs: {
+      "type": "submit"
+    },
+    on: {
+      "click": _vm.toggleUpvote
+    }
+  }, [_c('span', {
+    domProps: {
+      "textContent": _vm._s(_vm.upvotesCount)
+    }
+  }), _vm._v(" "), _c('span', {
+    staticClass: "glyphicon glyphicon-thumbs-up"
+  })]), _vm._v(" "), _c('button', {
+    class: _vm.classesDown,
+    attrs: {
+      "type": "submit"
+    },
+    on: {
+      "click": _vm.toggleDownvote
+    }
+  }, [_c('span', {
+    domProps: {
+      "textContent": _vm._s(_vm.downvotesCount)
+    }
+  }), _vm._v(" "), _c('span', {
+    staticClass: "glyphicon glyphicon-thumbs-down"
+  })])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-23903fc4", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

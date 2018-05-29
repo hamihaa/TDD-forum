@@ -1,5 +1,9 @@
 <?php
 
+use App\CommentVote;
+use App\Reply;
+use Illuminate\Support\Facades\Session;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -9,9 +13,15 @@
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 
 Auth::routes();
+
+Route::get('/test', function () {
+    dd(Session::all());
+    $reply = Reply::with('upvotes', 'downvotes')->find(2);
+    return $reply;
+});
 
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');
@@ -45,6 +55,10 @@ Route::delete('/threads/{category}/{thread}/votes', 'ThreadVoteController@destro
 
 Route::post('/replies/{reply}/favorite', 'FavoriteController@store');
 Route::delete('/replies/{reply}/favorite', 'FavoriteController@destroy');
+
+Route::post('/replies/{reply}/vote/{type}', 'CommentVotesController@storeVote');
+Route::patch('/replies/{reply}/vote/{type}', 'CommentVotesController@updateVote');
+Route::delete('/replies/{reply}/vote', 'CommentVotesController@destroy');
 
 Route::get('profiles/{user}', 'ProfileController@show');
 Route::patch('profiles/{user}', 'ProfileController@update');

@@ -16,7 +16,8 @@
                 <div>
                 </div>
                 <div v-if="signedIn">
-                    <favorite :reply="data"></favorite>
+                    <!-- <favorite :reply="data"></favorite> -->
+                    <comment-vote :reply="data"></comment-vote>
                 </div>
             </div>
             </div>
@@ -52,58 +53,59 @@
 </template>
 
 <script>
-    import Favorite from './Favorite.vue';
-    import moment from 'moment-timezone';
+import Favorite from "./Favorite.vue";
+import CommentVote from "./CommentVote.vue";
+import moment from "moment-timezone";
 
-    export default {
-        props: ['data'],
+export default {
+  props: ["data"],
 
-        components: { Favorite },
+  components: { Favorite, CommentVote },
 
-        data() {
-            return {
-                editing: false,
-                id: this.data.id,
-                body: this.data.body,
-            };
-        },
-        computed: {
-            ago() {
-                moment.locale('sl');
-                return moment(this.data.created_at).fromNow();
-            },
+  data() {
+    return {
+      editing: false,
+      id: this.data.id,
+      body: this.data.body
+    };
+  },
+  computed: {
+    ago() {
+      moment.locale("sl");
+      return moment(this.data.created_at).fromNow();
+    },
 
-            signedIn() {
-                return window.Laravel.signedIn;
-            },
+    signedIn() {
+      return window.Laravel.signedIn;
+    },
 
-            canUpdate() {
-                return this.authorize(user => (this.data.user_id == user.id))
-            },
+    canUpdate() {
+      return this.authorize(user => this.data.user_id == user.id);
+    },
 
-            canDelete() {
-                return this.authorize(user => this.data.thread.creator.id == user.id)
-            }
-        },
-
-        methods: {
-            update() {
-                axios.patch('/replies/' + this.data.id, {
-                    body: this.body
-                });
-                this.editing = false;
-
-                flash('Komentar je bil posodobljen.')
-            },
-
-            destroy() {
-                axios.delete('/replies/' + this.data.id);
-                //child makes an event for parent to react in Replies.vue
-
-                this.$emit('deleted', this.data.id);
-                /*$(this.$el).fadeOut(300, () => {
-                flash('deleted')}); */
-            }
-        }
+    canDelete() {
+      return this.authorize(user => this.data.thread.creator.id == user.id);
     }
+  },
+
+  methods: {
+    update() {
+      axios.patch("/replies/" + this.data.id, {
+        body: this.body
+      });
+      this.editing = false;
+
+      flash("Komentar je bil posodobljen.");
+    },
+
+    destroy() {
+      axios.delete("/replies/" + this.data.id);
+      //child makes an event for parent to react in Replies.vue
+
+      this.$emit("deleted", this.data.id);
+      /*$(this.$el).fadeOut(300, () => {
+                flash('deleted')}); */
+    }
+  }
+};
 </script>
