@@ -76,3 +76,6 @@ Route::resource('news', 'NewsController');
 //Route::get('news/{news}', 'NewsController@show');
 //Route::post('news', 'NewsController@store');
 //Route::delete('')
+
+// reporting replies
+Route::post('/replies/{reply}/report', 'ReportController@store');

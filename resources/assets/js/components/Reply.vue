@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isHidden">
         <div class="panel-heading">
             <div :id="'reply-'+id" class="level">
                 <h5 class="flex">
@@ -46,10 +46,18 @@
                     Odstrani komentar
                     <span class="glyphicon glyphicon-trash"></span>
                 </button>
+                <button v-if="signedIn" class="btn btn-link btn-sm mr-1" @click="report">
+                    Prijavi komentar
+                    <span class="glyphicon glyphicon-warning"></span>
+                </button>
 
             <!--  @endcan> -->
         </div>
-    </div>
+        <div v-else>
+            <div class="panel-heading">
+                Ta komentar je skrit zaradi vaše prijave.
+            </div>
+        </div>
 </template>
 
 <script>
@@ -66,10 +74,14 @@ export default {
     return {
       editing: false,
       id: this.data.id,
-      body: this.data.body
+      body: this.data.body,
+      hide: false
     };
   },
   computed: {
+    isHidden() {
+      return this.data.isReported;
+    },
     ago() {
       moment.locale("sl");
       return moment(this.data.created_at).fromNow();
@@ -89,6 +101,11 @@ export default {
   },
 
   methods: {
+    report() {
+      axios
+        .post("/replies/" + this.data.id + "/report")
+        .then(response => (this.data.isReported = true));
+    },
     update() {
       axios.patch("/replies/" + this.data.id, {
         body: this.body

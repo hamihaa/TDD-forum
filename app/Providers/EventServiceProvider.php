@@ -19,7 +19,11 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         'App\Events\ThreadBodyWasUpdated' => [
-          'App\Listeners\NotifyAllWhoVoted'
+            'App\Listeners\NotifyAllWhoVoted'
+        ],
+
+        'App\Events\ReplyWasReported' => [
+            'App\Listeners\NotifyAdminAboutReport'
         ],
 
         'Illuminate\Auth\Events\Login' => [

@@ -13,10 +13,10 @@ class Reply extends Model
     protected $guarded = [];
 
     //to eager load owner, favourites and  with every reply object
-    protected $with = ['owner', 'favorites', 'thread'];
+    protected $with = ['owner', 'favorites', 'thread', 'reports'];
 
     //adds custom attributes to an array everytime Reply is casted
-    protected $appends = ['favoritesCount', 'upvotesCount', 'downvotesCount', 'isFavorited', 'isDownvoted', 'isUpvoted'];
+    protected $appends = ['favoritesCount', 'upvotesCount', 'downvotesCount', 'isFavorited', 'isDownvoted', 'isUpvoted', 'isReported'];
 
     protected static function boot()
     {
@@ -76,6 +76,11 @@ class Reply extends Model
         return $this->votes()->where('vote_type', 0);
     }
 
+    public function reports()
+    {
+        return $this->hasMany('App\Report', 'reply_id');
+    }
+
     public function getUpvotesCountAttribute()
     {
         return $this->upvotes()->count();
@@ -94,6 +99,11 @@ class Reply extends Model
     public function getIsDownvotedAttribute()
     {
         return !!$this->downvotes()->where('user_id', auth()->id())->count();
+    }
+
+    public function getIsReportedAttribute()
+    {
+        return !!$this->reports()->where('user_id', auth()->id())->count();
     }
 
     /**
