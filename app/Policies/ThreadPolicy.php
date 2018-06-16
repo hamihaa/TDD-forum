@@ -18,8 +18,7 @@ class ThreadPolicy
      */
     public function before($user)
     {
-        if($user->name == 'admin')
-        {
+        if ($user->name == 'admin') {
             return true;
         }
     }
@@ -66,7 +65,7 @@ class ThreadPolicy
 
     public function editBody(User $user, Thread $thread)
     {
-        return $thread->thread_status_id == 1 || $thread->thread_status_id == 2 && $thread->user_id == $user->id;
+        return ($thread->thread_status_id == 1 || $thread->thread_status_id == 2) && $thread->user_id == $user->id;
     }
 
     /**

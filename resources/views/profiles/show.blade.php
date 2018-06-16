@@ -9,7 +9,7 @@
                     <img src="/storage/{{ $profileUser->avatar() }}" class="img-circle" width="200px" height="200px">
 
                     {{ $profileUser->name }}
-                    <small>član od {{ $profileUser->created_at->format('m.Y ') }}</small>
+                    @if($profileUser->created_at)<small>član od {{ $profileUser->created_at->format('m.Y ') }}</small>@endif
                 </h1>
             </div>
 

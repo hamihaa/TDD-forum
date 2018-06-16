@@ -22,9 +22,9 @@ class NotifyMentionedUsers
 
         $names = $matches[1];
         //notify each user that was mentioned
-        foreach($names as $name){
-            $user = User::whereName($name)->first();
-            if($user) {
+        foreach ($names as $name) {
+            $user = User::whereName($name)->where('get_notifications', 1)->first();
+            if ($user) {
                 $user->notify(new YouWereMentioned($event->reply));
             }
         }

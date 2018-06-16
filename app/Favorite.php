@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Favorite extends Model
 {
-    use RecordsActivity;
+    // use RecordsActivity;
 
     protected $guarded = [];
 

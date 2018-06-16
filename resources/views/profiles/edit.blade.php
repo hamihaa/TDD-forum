@@ -23,7 +23,7 @@
                         <label class="col-md-3 control-label"></label>
                         <div class="col-md-8">
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary" required>Potrdi profilno sliko</button>
+                                <button type="submit" class="btn btn-primary">Potrdi profilno sliko</button>
                                 <input class="btn btn-default" value="Prekliči" type="reset">
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                     <div class="form-group {{ $errors->has('first_name') ? 'has-error' : '' }}">
                         <label class="col-lg-3 control-label" for="first_name">Ime:</label>
                         <div class="col-lg-8">
-                            <input type="text" value="{{ $user->first_name }}" class="form-control" name="first_name" id="first_name" required>
+                            <input type="text" value="{{ $user->first_name }}" class="form-control" name="first_name" id="first_name">
                             {!! $errors->first('first_name', '<span class="Error">:message</span>') !!}
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                     <div class="form-group {{ $errors->has('last_name') ? 'has-error' : '' }}">
                         <label class="col-lg-3 control-label" for="last_name">Priimek:</label>
                         <div class="col-lg-8">
-                            <input type="text" value="{{ $user->last_name }}" class="form-control" name="last_name" id="last_name" required>
+                            <input type="text" value="{{ $user->last_name }}" class="form-control" name="last_name" id="last_name">
                             {!! $errors->first('last_name', '<span class="Error">:message</span>') !!}
                         </div>
                     </div>
@@ -68,7 +68,15 @@
                         <label class="col-lg-3 control-label" for="is_anonymous">Želim biti anonimen:</label>
                         <div class="col-lg-8">
                             <input type="checkbox" name="is_anonymous" value="1" {{ $user->is_anonymous? 'checked' : '' }}><br>
-                            {!! $errors->first('email', '<span class="Error">:message</span>') !!}
+                            {!! $errors->first('is_anonymous', '<span class="Error">:message</span>') !!}
+                        </div>
+                    </div>
+
+                    <div class="form-group {{ $errors->has('get_notifications') ? 'has-error' : '' }}">
+                        <label class="col-lg-3 control-label" for="get_notifications">Želim prejemati obvestila, kadar me nekdo označi v komentarju:</label>
+                        <div class="col-lg-8">
+                            <input type="checkbox" name="get_notifications" value="1" {{ $user->get_notifications? 'checked' : '' }}><br>
+                            {!! $errors->first('get_notifications', '<span class="Error">:message</span>') !!}
                         </div>
                     </div>
 

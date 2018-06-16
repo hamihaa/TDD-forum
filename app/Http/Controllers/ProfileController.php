@@ -31,20 +31,15 @@ class ProfileController extends Controller
 //        dd($request['is_anonymous']);
         $this->authorize('update', $user);
 
-        if ($request['password'] == null)
-            {
+        if ($request['password'] == null) {
             $this->validate(request(), [
                 'name' => 'required|max:255|unique:users,name,' . $user->id,
-                'first_name' => 'required',
-                'last_name' => 'required',
                 'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             ]);
 
         } else {
             $this->validate(request(), [
                 'name' => 'required|max:255|unique:users,name,' . $user->id,
-                'first_name' => 'required|min:1',
-                'last_name' => 'required|min:1',
                 'email' => 'required|email|max:255|unique:users,email,' . $user->id,
                 'password' => 'confirmed|required|min:6',
             ]);
@@ -57,6 +52,7 @@ class ProfileController extends Controller
         $user->first_name = $request['first_name'];
         $user->last_name = $request['last_name'];
         $user->is_anonymous = $request['is_anonymous'] ? '1' : '0';
+        $user->get_notifications = $request['get_notifications'] ? '1' : '0';
         $user->save();
 
         return back();
