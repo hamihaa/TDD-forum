@@ -35,15 +35,17 @@ class ThreadController extends Controller
         $cloud = Tag::toCloudArray($tags);
 
         //date filters
-        $dateFrom = request('dateFrom') ?: 'Od...';
-        $dateTo = request('dateTo') ?: 'Do...';
+        $dateFrom = request('dateFrom') ? : 'Od...';
+        $dateTo = request('dateTo') ? : 'Do...';
 
         if (request()->wantsJson()) {
             return $threads;
         }
 
-        return view('threads.index',
-            compact('threads', 'tags', 'cloud', 'dateFrom', 'dateTo'));
+        return view(
+            'threads.index',
+            compact('threads', 'tags', 'cloud', 'dateFrom', 'dateTo')
+        );
     }
 
     /**
@@ -85,7 +87,7 @@ class ThreadController extends Controller
         $isUpVotedOn = $thread->isUpVotedOn;
         $isDownVotedOn = $thread->isDownVotedOn;
 
-        $governmentReply =  $thread->replies->where('user_id', 7)->first();
+        $governmentReply = $thread->replies->where('user_id', 7)->first();
 
         return view('threads.show', compact('thread', 'neededVotes', 'isUpVotedOn', 'isDownVotedOn', 'governmentReply'));
         //dont need replies, because it gets requested on frontend with vue
@@ -117,7 +119,7 @@ class ThreadController extends Controller
         $this->authorize('update', $thread);
 
         //if only thread_status_id is being updated (by admin)
-        if($request['thread_status_id']){
+        if ($request['thread_status_id']) {
             $thread->changeStatus($request['thread_status_id']);
         } else {
             $this->authorize('editBody', $thread);
@@ -135,7 +137,8 @@ class ThreadController extends Controller
             $thread->update([
                 'category_id' => $request['category_id'],
                 'title' => $request['title'],
-                'body' => $request['body']]);
+                'body' => $request['body']
+            ]);
 
             //notify subscribers and all that voted
             event(new ThreadBodyWasUpdated($thread));
@@ -160,18 +163,17 @@ class ThreadController extends Controller
         $this->authorize('delete', $thread);
 
         //if one transaction fails, rollback all
-        \DB::transaction(function() use ($thread) {
+        \DB::transaction(function () use ($thread) {
             $thread->replies->each->delete();
             $thread->votes->each->delete();
             $thread->delete();
         });
 
-        if(request()->wantsJson()){
+        if (request()->wantsJson()) {
             return response([], 204);
         }
 
-        return redirect('/threads')->with('flash', 'Predlog je bil izbrisan.');
-;
+        return redirect('/threads')->with('flash', 'Predlog je bil izbrisan.');;
     }
 
     /**

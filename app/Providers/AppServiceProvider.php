@@ -17,10 +17,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        \View::composer('*', function ($view) {
-            $categories = \Cache::rememberForever('categories', function() {
-                return Category::all();
-            });
+        \View::composer('layouts.nav', function ($view) {
+            $categories = Category::all();
+
+            // $categories = \Cache::rememberForever('categories', function () {
+            //     return Category::all();
+            // });
 
             $view->with('categories', $categories);
         });
@@ -33,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if($this->app->isLocal()){
+        if ($this->app->isLocal()) {
             $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
         }
     }

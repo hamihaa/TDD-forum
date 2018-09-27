@@ -57,7 +57,7 @@ class Thread extends Model
         if ($this->image) {
             return $this->image;
         }
-        return "categories/" . $this->category->name . ".jpg";
+        return "categories/" . $this->category->slug . ".jpg";
     }
     /**
      * Get the user who created this thread.

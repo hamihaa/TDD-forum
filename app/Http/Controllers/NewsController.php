@@ -9,7 +9,7 @@ class NewsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('admin');
+        $this->middleware('admin')->except(['show']);
     }
 
     /**
@@ -48,7 +48,7 @@ class NewsController extends Controller
         $news = News::create(request()->all());
 
         $thumbnail = request('image');
-        if(isset($thumbnail)){
+        if (isset($thumbnail)) {
             $news->update([
                 'thumbnail' => request()->file('image')->store('uploads', 'public')
             ]);
