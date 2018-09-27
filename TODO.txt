@@ -731,5 +731,3 @@ ustvari nov route na api/users in php artisan make:controller Api/UserController
 
 103. Iskanje po datumu
     za iskanje po datumu smo uporabili https://github.com/charliekassel/vuejs-datepicker, ker bootstrap ne omogoča datepickerja out of the box
-
-104. to je to začni delat na diplomi

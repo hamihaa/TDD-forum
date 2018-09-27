@@ -12,56 +12,85 @@ class CategoriesTableSeeder extends Seeder
     public function run()
     {
         DB::table('categories')->insert([
-            ['name' => 'davki_finance',
-            'slug' => 'davki_finance'],
+            [
+                'name' => 'davki in finance',
+                'slug' => 'davki_finance'
+            ],
 
-            ['name' => 'gospodarstvo',
-            'slug' => 'gospodarstvo'],
+            [
+                'name' => 'gospodarstvo',
+                'slug' => 'gospodarstvo'
+            ],
 
-            ['name' => 'javna_uprava',
-            'slug' => 'javna_uprava'],
+            [
+                'name' => 'javna uprava',
+                'slug' => 'javna_uprava'
+            ],
 
-            ['name' => 'kultura',
-            'slug' => 'kultura'],
+            [
+                'name' => 'kultura',
+                'slug' => 'kultura'
+            ],
 
-            ['name' => 'davki_finance',
-            'slug' => 'davki_finance'],
+            [
+                'name' => 'kmetijstvo',
+                'slug' => 'kmetijstvo'
+            ],
 
-            ['name' => 'kmetijstvo',
-            'slug' => 'kmetijstvo'],
+            [
+                'name' => 'notranje zadeve',
+                'slug' => 'notranje'
+            ],
 
-            ['name' => 'notranje',
-            'slug' => 'notranje'],
+            [
+                'name' => 'obramba',
+                'slug' => 'obramba'
+            ],
 
-            ['name' => 'obramba',
-            'slug' => 'obramba'],
+            [
+                'name' => 'okolje',
+                'slug' => 'okolje'
+            ],
 
-            ['name' => 'okolje',
-            'slug' => 'okolje'],
+            [
+                'name' => 'pravosodje',
+                'slug' => 'pravosodje'
+            ],
 
-            ['name' => 'pravosodje',
-            'slug' => 'pravosodje'],
+            [
+                'name' => 'promet',
+                'slug' => 'promet'
+            ],
 
-            ['name' => 'promet',
-            'slug' => 'promet'],
+            [
+                'name' => 'sociala',
+                'slug' => 'sociala'
+            ],
 
-            ['name' => 'sociala',
-            'slug' => 'sociala'],
+            [
+                'name' => 'splošno',
+                'slug' => 'splosno'
+            ],
 
-            ['name' => 'splosno',
-            'slug' => 'splosno'],
+            [
+                'name' => 'šolstvo',
+                'slug' => 'solstvo'
+            ],
 
-            ['name' => 'solstvo',
-            'slug' => 'solstvo'],
+            [
+                'name' => 'visoko šolstvo in znanost',
+                'slug' => 'visoko_solstvo_znanost'
+            ],
 
-            ['name' => 'visoko_solstvo_znanost',
-            'slug' => 'visoko_solstvo_znanost'],
+            [
+                'name' => 'zdravje',
+                'slug' => 'zdravje'
+            ],
 
-            ['name' => 'zdravje',
-            'slug' => 'zdravje'],
-
-            ['name' => 'zunanje',
-            'slug' => 'zunanje']
+            [
+                'name' => 'zunanje zadeve',
+                'slug' => 'zunanje'
+            ]
 
         ]);
     }
