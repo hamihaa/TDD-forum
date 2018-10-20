@@ -53,6 +53,7 @@ class ProfileController extends Controller
         $user->last_name = $request['last_name'];
         $user->is_anonymous = $request['is_anonymous'] ? '1' : '0';
         $user->get_notifications = $request['get_notifications'] ? '1' : '0';
+        $user->get_newsletter = $request['get_newsletter'] ? '1' : '0';
         $user->save();
 
         return back();

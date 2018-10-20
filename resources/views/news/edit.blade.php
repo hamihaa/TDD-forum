@@ -6,31 +6,27 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Dodajanje novice</div>
                 <div class="panel-body">
-                    <form method="POST" action="/news" enctype="multipart/form-data">
-                        {{ csrf_field() }}
+                    <form method="POST" action="{{ $news->path() }}">
+                        {{ csrf_field() }} {{ method_field('PATCH') }}
                         <!-- Title Form Input  -->
                         <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
                             <label for="title">Naslov:</label>
-                            <input type="text" class="form-control" name="title" id="title" required value="{{ old('title') }}">                            {!! $errors->first('title', '<span class="Error">:message</span>') !!}
+                            <input type="text" class="form-control" name="title" id="title" required value="{{ $news->title }}">                            {!! $errors->first('title', '<span class="Error">:message</span>') !!}
                         </div>
                         <!--  Form Input  -->
                         <div class="form-group {{ $errors->has('body') ? 'has-error' : '' }}">
                             <label for="">Vsebina:</label>
                             <textarea class="form-control" name="body" id="body" rows="8" required>
-                                    {{ old('body') }}
+                                    {{ $news->body }}
                                 </textarea> {!! $errors->first('body', '<span class="Error">:message</span>')
                             !!}
                         </div>
-                        <!-- Image Form Input  -->
-                        <div class="form-group {{ $errors->has('image') ? 'has-error' : '' }}">
-                            <label for="image">Predstavitvena slika:</label>
-                            <input type="file" class="form-control" name="image" id="image" value="{{ old('image') }}"> {!!
-                            $errors->first('image', '<span class="Error">:message</span>') !!}
-                        </div>
                         <!-- Button Form Input  -->
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary" required>Objavi</button>
+                            <button type="submit" class="btn btn-primary" required>Potrdi spremembe</button>
+                            <a href="/threads" class="btn btn-default">Prekliči</a>
                         </div>
+
                     </form>
                 </div>
             </div>

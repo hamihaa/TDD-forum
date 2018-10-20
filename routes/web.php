@@ -3,6 +3,7 @@
 use App\CommentVote;
 use App\Reply;
 use Illuminate\Support\Facades\Session;
+use App\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,9 +27,24 @@ if (version_compare(PHP_VERSION, '7.2.0', '>=')) {
 Auth::routes();
 
 Route::get('/test', function () {
-    dd(Session::all());
-    $reply = Reply::with('upvotes', 'downvotes')->find(2);
-    return $reply;
+
+    $users = User::where('get_newsletter', 1)->get();
+
+    $lastPosts = \App\Thread::where('created_at', '<', \Carbon\Carbon::now()->subDays(7))->limit(5)->get();
+
+    $lastWithResponse = \App\Thread::where('created_at', '<', \Carbon\Carbon::now()->subDays(7))->whereIn('thread_status_id', [5, 6])->limit(5)->get();
+
+    $mostVoted = \App\Thread::where('created_at', '<', \Carbon\Carbon::now()->subDays(7))->withCount('votes')->orderBy('votes_count', 'desc')->limit(5)->get();
+
+    $mostCommented = \App\Thread::where('created_at', '<', \Carbon\Carbon::now()->subDays(7))->withCount('replies')->orderBy('replies_count', 'desc')->limit(5)->get();
+
+    foreach ($users as $user) {
+        Mail::send('emails.newsletter', compact('lastPosts', 'lastWithResponse', 'mostVoted', 'mostCommented'), function ($message) use ($user) {
+            $message->from('predlagam.vladi@test.test', 'Tedenski bilten na predlagam.vladi');
+            $message->to($user->email);
+        });
+    }
+
 });
 
 Route::get('/', 'HomeController@index');
@@ -87,3 +103,6 @@ Route::resource('news', 'NewsController');
 
 // reporting replies
 Route::post('/replies/{reply}/report', 'ReportController@store');
+
+// marking as answer
+Route::post('/replies/{reply}/mark-as-answer', 'ReplyController@markAsAnswer');

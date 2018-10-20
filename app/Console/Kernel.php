@@ -24,7 +24,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command("ChangeThreadStatuses")->dailyAt('23:55');
+        $schedule->command("thread:changeStatus")->dailyAt('23:55');
+        $schedule->command("newsletter:send")->dailyAt('23:55');
+
         // $schedule->command('inspire')
         //          ->hourly();
     }

@@ -87,7 +87,7 @@ class ThreadController extends Controller
         $isUpVotedOn = $thread->isUpVotedOn;
         $isDownVotedOn = $thread->isDownVotedOn;
 
-        $governmentReply = $thread->replies->where('user_id', 7)->first();
+        $governmentReply = $thread->replies->where('government_reply', 1)->first();
 
         return view('threads.show', compact('thread', 'neededVotes', 'isUpVotedOn', 'isDownVotedOn', 'governmentReply'));
         //dont need replies, because it gets requested on frontend with vue
@@ -147,7 +147,7 @@ class ThreadController extends Controller
             $thread->votes->each->delete();
 
         }
-        return redirect($thread->path())->with('flash', 'Post has been updated.');
+        return redirect($thread->path())->with('flash', 'Predlog je bil posodobljen.');
     }
 
     /**
@@ -186,7 +186,7 @@ class ThreadController extends Controller
      */
     public function getThreads(Category $category, ThreadFilters $filters)
     {
-        $threads = Thread::latest()->with('votes')->filter($filters);
+        $threads = Thread::latest()->where('thread_status_id', '>', 1)->with('votes')->filter($filters);
 
         if ($category->exists) {
             $threads->where('category_id', $category->id);

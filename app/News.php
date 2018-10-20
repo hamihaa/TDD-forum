@@ -10,6 +10,6 @@ class News extends Model
 
     public function path()
     {
-        return ("news/$this->id");
+        return ("/news/$this->id");
     }
 }

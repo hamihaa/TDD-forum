@@ -21,7 +21,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $threads = Thread::where('thread_status_id', 1)->orderBy('created_at', 'asc')->get();
+        $threads = Thread::orderBy('created_at', 'asc')->get();
         $users = User::all();
         $news = News::all();
         return view('admin.index', compact('threads', 'users', 'news'));

@@ -12,8 +12,7 @@ class UserPolicy
 
     public function before($user)
     {
-        if($user->name == 'admin')
-        {
+        if ($user->name == 'admin') {
             return true;
         }
     }
@@ -24,7 +23,7 @@ class UserPolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function view(User $user, User $user)
+    public function view(User $user)
     {
         //
     }
@@ -59,7 +58,7 @@ class UserPolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function delete(User $user, EditedUser $user)
+    public function delete(User $user, EditedUser $editedUser)
     {
         //
     }

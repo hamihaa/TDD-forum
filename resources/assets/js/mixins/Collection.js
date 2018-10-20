@@ -2,12 +2,12 @@
 
 export default {
     data() {
-      return {
-          items: []
-      };
+        return {
+            items: []
+        };
     },
 
-    methods : {
+    methods: {
         //removes 1 from collection
         remove(index) {
             this.items.splice(index, 1);

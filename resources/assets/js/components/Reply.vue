@@ -1,63 +1,68 @@
 <template>
-    <div v-if="!isHidden">
-        <div class="panel-heading">
-            <div :id="'reply-'+id" class="level">
-                <h5 class="flex">
-                    <div v-if="data.owner.is_anonymous == 0">
-                        <a  :href="'/profiles/'+ data.owner.name"
-                            v-text="data.owner.name">
-                        </a>,
-                    </div>
-                    <div v-else>
-                            anonimni uporabnik,
-                    </div>
-                    <span v-text="ago"></span>
-                </h5>
-                <div>
-                </div>
-                <div v-if="signedIn">
-                    <!-- <favorite :reply="data"></favorite> -->
-                    <comment-vote :reply="data"></comment-vote>
-                </div>
-            </div>
-            </div>
-            <div class="panel-body">
-                <div v-if="editing">
-                    <form @submit="update">
-                        <div class="form-group">
-                            <textarea class="form-control" v-model="body" required></textarea>
+    <div>
+        <div v-if="!isHidden">
+            <div class="panel-heading">
+                <div :id="'reply-'+id" class="level">
+                    <h5 class="flex">
+                        <div v-if="data.owner.is_anonymous == 0">
+                            <a  :href="'/profiles/'+ data.owner.name"
+                                v-text="data.owner.name">
+                            </a>,
                         </div>
-                        <button class="btn btn-xs btn-success">Potrdi</button>
-                        <button class="btn btn-xs btn-default" @click="editing = false" type="button">Prekliči</button>
-                    </form>
+                        <div v-else>
+                                anonimni uporabnik,
+                        </div>
+                        <span v-text="ago"></span>
+                    </h5>
+                    <div>
+                    </div>
+                    <div v-if="signedIn">
+                        <!-- <favorite :reply="data"></favorite> -->
+                        <comment-vote :reply="data"></comment-vote>
+                    </div>
                 </div>
-                <div v-else v-html="body"></div>
+                </div>
+                <div class="panel-body">
+                    <div v-if="editing">
+                        <form @submit="update">
+                            <div class="form-group">
+                                <textarea class="form-control" v-model="body" required></textarea>
+                            </div>
+                            <button class="btn btn-xs btn-success">Potrdi</button>
+                            <button class="btn btn-xs btn-default" @click="editing = false" type="button">Prekliči</button>
+                        </form>
+                    </div>
+                    <div v-else v-html="body"></div>
+                </div>
+
+
+                <!-- @can('delete', $reply) -->
+                <div class="panel-content level">
+                    <button class="btn btn-link btn-sm" v-if="canUpdate" @click="editing = true">
+                        Uredi
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </div>
+                    <button class="btn btn-link btn-sm mr-1" v-if="canDelete|canUpdate" @click="destroy">
+                        Odstrani komentar
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button v-if="signedIn && !canUpdate" class="btn btn-link btn-sm mr-1" @click="report">
+                        Prijavi komentar
+                        <span class="glyphicon glyphicon-warning"></span>
+                    </button>
+                    <button v-if="signedIn && canMarkAsAnswer" class="btn btn-link btn-sm mr-1" @click="markAsAnswer">
+                        Označi kot odgovor organa
+                        <span class="glyphicon glyphicon-warning"></span>
+                    </button>
+                <!--  @endcan> -->
             </div>
-
-
-            <!-- @can('delete', $reply) -->
-            <div class="panel-content level">
-                <button class="btn btn-link btn-sm" v-if="canUpdate" @click="editing = true">
-                    Uredi
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </button>
-            </div>
-                <button class="btn btn-link btn-sm mr-1" v-if="canDelete|canUpdate" @click="destroy">
-                    Odstrani komentar
-                    <span class="glyphicon glyphicon-trash"></span>
-                </button>
-                <button v-if="signedIn" class="btn btn-link btn-sm mr-1" @click="report">
-                    Prijavi komentar
-                    <span class="glyphicon glyphicon-warning"></span>
-                </button>
-
-            <!--  @endcan> -->
-        </div>
         <div v-else>
             <div class="panel-heading">
                 Ta komentar je skrit zaradi vaše prijave.
             </div>
         </div>
+    </div>
 </template>
 
 <script>
@@ -79,6 +84,14 @@ export default {
     };
   },
   computed: {
+    canMarkAsAnswer() {
+      return (
+        this.data.owner.name == "admin" &&
+        ["Predlog sprejet", "Predlog zavrnjen", "Neustrezno"].includes(
+          this.data.thread.status.status_name
+        )
+      );
+    },
     isHidden() {
       return this.data.isReported;
     },
@@ -96,11 +109,18 @@ export default {
     },
 
     canDelete() {
-      return this.authorize(user => this.data.thread.creator.id == user.id);
+      return this.authorize(
+        user => this.data.user_id == user.id || user.name == "admin"
+      );
     }
   },
 
   methods: {
+    markAsAnswer() {
+      axios
+        .post("/replies/" + this.data.id + "/mark-as-answer")
+        .then(window.location.reload());
+    },
     report() {
       axios
         .post("/replies/" + this.data.id + "/report")

@@ -4,10 +4,12 @@ import { Doughnut } from 'vue-chartjs'
 // import the component - chart you need
 
 
-export default Doughnut.extend({
-    props:['pro', 'against'],
+export default {
+    extends: Doughnut,
 
-    mounted () {
+    props: ['pro', 'against'],
+
+    mounted() {
         // Overwriting base render method with actual data.
         this.renderChart({
             type: 'doughnut',
@@ -18,7 +20,7 @@ export default Doughnut.extend({
                 {
                     label: 'Število glasov',
                     backgroundColor: ['#2ab27b', '#ef6733'],
-                    data: [this.pro, this.against ],
+                    data: [this.pro, this.against],
                 }
             ],
             options: {
@@ -32,4 +34,4 @@ export default Doughnut.extend({
 
         )
     }
-})
+}

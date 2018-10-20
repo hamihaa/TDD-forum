@@ -21,6 +21,14 @@ class ReplyController extends Controller
         return $thread->replies()->paginate(3);
     }
 
+    /** 
+     * Mark answer as government reply on thread
+     */
+    public function markAsAnswer(Request $request, Reply $reply)
+    {
+        $reply->government_reply = 1;
+        $reply->save();
+    }
     /**
      * Store a new Reply to Thread Object
      *
@@ -92,7 +100,7 @@ class ReplyController extends Controller
     {
         $this->authorize('delete', $reply);
         $reply->delete();
-        if (request()->expectsJson()){
+        if (request()->expectsJson()) {
             return response(['status' => 'odgovor izbrisan.']);
         }
         return back();

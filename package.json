@@ -21,8 +21,12 @@
   },
   "dependencies": {
     "at.js": "^1.5.3",
+    "chart.js": "^2.7.2",
+    "font-awesome": "^4.7.0",
     "jquery.caret": "^0.3.1",
     "moment": "^2.18.1",
+    "moment-timezone": "^0.5.21",
+    "vue-chartjs": "^3.4.0",
     "vuejs-datepicker": "^0.7.16"
   },
   "name": "laravel-forum",

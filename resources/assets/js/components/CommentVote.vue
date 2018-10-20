@@ -1,13 +1,13 @@
 <template>
     <div>
         <button type="submit" :class="classesUp" @click="toggleUpvote">
+            <span :class="{ 'white-color': this.isUpvoted }" class="glyphicon glyphicon-thumbs-up"></span>
             <span v-text="upvotesCount"></span>
-            <span class="glyphicon glyphicon-thumbs-up"></span>
         </button>
 
         <button type="submit" :class="classesDown" @click="toggleDownvote">
+            <span :class="{ 'white-color' : this.isDownvoted }" class="glyphicon glyphicon-thumbs-down"></span>
             <span v-text="downvotesCount"></span>
-            <span class="glyphicon glyphicon-thumbs-down"></span>
         </button>
     </div>
 </template>
@@ -29,10 +29,16 @@ export default {
 
   computed: {
     classesUp() {
-      return ["btn", this.isUpvoted ? "btn-success" : "btn-default"];
+      return [
+        "btn",
+        this.isUpvoted ? "btn-success white-color" : "btn-default"
+      ];
     },
     classesDown() {
-      return ["btn", this.isDownvoted ? "btn-danger" : "btn-default"];
+      return [
+        "btn",
+        this.isDownvoted ? "btn-danger white-color" : "btn-default"
+      ];
     }
   },
 
