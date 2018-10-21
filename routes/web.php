@@ -57,7 +57,9 @@ Route::get('/threads/{category}', 'ThreadController@index');
 Route::get('/threads/{category}/{thread}', 'ThreadController@show');
 Route::delete('/threads/{category}/{thread}', 'ThreadController@destroy');
 Route::get('/threads/{category}/{thread}/edit', 'ThreadController@edit');
+Route::get('/threads/{category}/{thread}/edit/gov', 'ThreadController@editGov');
 Route::patch('/threads/{category}/{thread}', 'ThreadController@update');
+Route::patch('/threads/{category}/{thread}/gov', 'ThreadController@updateGov');
 
 
 // TODO Route::post('/threads/{thread}/favorite', 'FavoriteController@store');

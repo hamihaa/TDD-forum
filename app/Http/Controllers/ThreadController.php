@@ -87,7 +87,9 @@ class ThreadController extends Controller
         $isUpVotedOn = $thread->isUpVotedOn;
         $isDownVotedOn = $thread->isDownVotedOn;
 
-        $governmentReply = $thread->replies->where('government_reply', 1)->first();
+        $governmentReply = $thread->government_reply;
+
+        // $governmentReply = $thread->replies->where('government_reply', 1)->first();
 
         return view('threads.show', compact('thread', 'neededVotes', 'isUpVotedOn', 'isDownVotedOn', 'governmentReply'));
         //dont need replies, because it gets requested on frontend with vue
@@ -105,6 +107,14 @@ class ThreadController extends Controller
         $this->authorize('editBody', $thread);
 
         return view('threads.edit', compact('thread'));
+    }
+
+    /** Add goverment reply */
+    public function editGov($categoryId, Thread $thread)
+    {
+        $this->authorize('editBody', $thread);
+
+        return view('threads.edit-gov', compact('thread'));
     }
 
     /**
@@ -149,6 +159,17 @@ class ThreadController extends Controller
         }
         return redirect($thread->path())->with('flash', 'Predlog je bil posodobljen.');
     }
+
+    public function updateGov($categoryId, Thread $thread, Request $request)
+    {
+        $this->authorize('update', $thread);
+        //if only thread_status_id is being updated (by admin)
+        $thread->update([
+            'government_reply' => $request['government_reply'],
+        ]);
+        return redirect($thread->path())->with('flash', 'Predlog je bil posodobljen.');
+    }
+
 
     /**
      * Remove the specified resource from storage.

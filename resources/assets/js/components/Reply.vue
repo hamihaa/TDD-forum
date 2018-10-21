@@ -51,10 +51,10 @@
                         Prijavi komentar
                         <span class="glyphicon glyphicon-warning"></span>
                     </button>
-                    <button v-if="signedIn && canMarkAsAnswer" class="btn btn-link btn-sm mr-1" @click="markAsAnswer">
+                    <!-- <button v-if="signedIn && canMarkAsAnswer" class="btn btn-link btn-sm mr-1" @click="markAsAnswer">
                         Označi kot odgovor organa
                         <span class="glyphicon glyphicon-warning"></span>
-                    </button>
+                    </button> -->
                 <!--  @endcan> -->
             </div>
         <div v-else>

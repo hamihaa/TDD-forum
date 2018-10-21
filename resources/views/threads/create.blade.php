@@ -31,7 +31,7 @@
                         <!--  Form Input  -->
                         <div class="form-group {{ $errors->has('body') ? 'has-error' : '' }}">
                             <label for="">Vsebina:</label>
-                            <textarea class="form-control" name="body" id="body" rows="8" required>
+                            <textarea class="form-control" name="body" id="contentbody" rows="8" required>
                                     {{ old('body') }}
                                 </textarea> {!! $errors->first('body', '<span class="Error">:message</span>')
                             !!}

@@ -12,7 +12,7 @@
             <div class="panel-body">
                 @if(isset($news->thumbnail))<img src="/storage/{{$news->thumbnail}}" style="width:auto;height:auto;max-width:100%;padding-bottom:20px;">@endif
                 <article>
-                    {{ $news->body }}
+                    {!! $news->body !!}
                 </article>
             </div>
         </div>

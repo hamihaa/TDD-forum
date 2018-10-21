@@ -70,7 +70,7 @@
                         @if(isset($thread->image))<img src="/storage/{{$thread->image}}" style="width:auto;height:auto;max-width:100%;padding-bottom:20px;">@endif
 
                         <article>
-                            {{ $thread->body }}
+                            {!! $thread->body !!}
                         </article>
                     </div>
                     <div>
@@ -85,12 +85,12 @@
                 <!-- Odgovor organa -->
                 @if(isset($governmentReply) && ($thread->thread_status_id == 5 || $thread->thread_status_id == 6))
                 <div class="gov-reply-section well well-lg">
-                    <h4>Odgovor organa</h4> <small> <strong>odgovor objavljen: </strong> {{  $governmentReply->created_at->format('d.m.y') }}
+                    <h4>Odgovor organa</h4> <small> <strong>odgovor objavljen: </strong> {{  $thread->updated_at->format('d.m.y') }}
                             </small>
                     <section class=" reply-body">
                         <div class="reply-date">
                         </div>
-                        {{ $governmentReply->body }}
+                        {!! $governmentReply !!}
                     </section>
                 </div>
                 @endif
